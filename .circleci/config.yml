@@ -2,36 +2,65 @@
 #
 # Check https://circleci.com/docs/2.0/language-javascript/ for more details
 #
+var_1: &default_docker_image circleci/node:10.15
+
+var_2: &cache_key v1-dependencies-{{ checksum "package.json" }}
+
+# Settings common to each job
+var_3: &job_defaults
+  working_directory: ~/repo
+  docker:
+  - image: *default_docker_image
+
+var_4: &yarn_install
+  run:
+    name: Running Yarn install
+    command: yarn install
+
 version: 2
 jobs:
-  build:
-    docker:
-      # specify the version you desire here
-      - image: circleci/node:10.15
-
-      # Specify service dependencies here if necessary
-      # CircleCI maintains a library of pre-built images
-      # documented at https://circleci.com/docs/2.0/circleci-images/
-      # - image: circleci/mongo:3.4.4
-
-    working_directory: ~/repo
-
+  install-dependencies:
+    <<: *job_defaults
     steps:
       - checkout
 
       # Download and cache dependencies
       - restore_cache:
           keys:
-          - v1-dependencies-{{ checksum "package.json" }}
+          - *cache_key
           # fallback to using the latest cache if no exact match is found
           - v1-dependencies-
 
-      - run: yarn install
+      - *yarn_install
 
       - save_cache:
           paths:
             - node_modules
-          key: v1-dependencies-{{ checksum "package.json" }}
+          key: *cache_key
 
-      # run tests!
+  linter:
+    <<: *job_defaults
+    steps:
+      - checkout
+      - restore_cache:
+          key: *cache_key
+      - *yarn_install
+      - run: yarn lint
+
+  test:
+    <<: *job_defaults
+    steps:
+      - checkout
+      - restore_cache:
+          key: *cache_key
+      - *yarn_install
       - run: yarn test
+
+workflows:
+  version: 2
+  check-linter:
+    jobs:
+      - linter
+  check-test:
+    jobs:
+      - test
