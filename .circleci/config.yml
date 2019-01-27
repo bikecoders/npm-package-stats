@@ -6,21 +6,22 @@ var_1: &default_docker_image circleci/node:10.15
 
 var_2: &cache_key v1-dependencies-{{ checksum "package.json" }}
 
-# Settings common to each job
-var_3: &job_defaults
-  working_directory: ~/repo
-  docker:
-  - image: *default_docker_image
-
-var_4: &yarn_install
+var_3: &yarn_install
   run:
     name: Running Yarn install
     command: yarn install
 
-version: 2
+version: 2.1
+
+executors:
+  my-executor:
+    docker:
+      - image: *default_docker_image
+    working_directory: ~/repo
+
 jobs:
   install-dependencies:
-    <<: *job_defaults
+    executor: my-executor
     steps:
       - checkout
 
@@ -39,7 +40,7 @@ jobs:
           key: *cache_key
 
   linter:
-    <<: *job_defaults
+    executor: my-executor
     steps:
       - checkout
       - restore_cache:
@@ -48,7 +49,7 @@ jobs:
       - run: yarn lint
 
   test:
-    <<: *job_defaults
+    executor: my-executor
     steps:
       - checkout
       - restore_cache:
