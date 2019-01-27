@@ -10,17 +10,18 @@
     "start": "ts-node -r tsconfig-paths/register src/main.ts",
     "start:dev": "nodemon",
     "start:debug": "nodemon --config nodemon-debug.json",
-    "prestart:prod": "rimraf dist && npm run build",
+    "prestart:prod": "rimraf dist && yarn build",
     "start:prod": "node dist/main.js",
     "lint": "tslint -p tsconfig.json -c tslint.json",
     "lint:report": "yarn --silent run lint --format json > reports/lint_issues.json",
+    "lint:report-forced": "yarn --silent run lint --format json --force > reports/lint_issues.json",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "pretest:sonar": "yarn run lint:report && yarn run test:cov",
-    "test:sonar": "sonar-scanner"
+    "pretest:sonar-local": "yarn lint:report-forced && yarn test:cov",
+    "test:sonar-local": "sonar-scanner"
   },
   "dependencies": {
     "@nestjs/common": "^5.4.0",

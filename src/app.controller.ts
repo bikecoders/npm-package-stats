@@ -7,6 +7,10 @@ export class AppController {
 
   @Get('health')
   healthCheck(): any {
-    return this.appService.getHealthCheck();
+    for ( let i = 0, j = 0; i < 10; i++) {
+      j = i;
+    }
+
+    return this.appService.getHealthCheck()
   }
 }

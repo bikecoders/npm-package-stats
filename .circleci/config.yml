@@ -6,13 +6,19 @@ var_1: &default_docker_image circleci/node:10.15
 
 var_2: &cache_key v1-dependencies-{{ checksum "yarn.lock" }}
 
+var_3: &workdir /home/circleci/repo
+
 version: 2.1
 
 executors:
   my-executor:
     docker:
       - image: *default_docker_image
-    working_directory: ~/repo
+    working_directory: *workdir
+  sonar-executor:
+    docker:
+      - image: finanzcheck/docker-node-java:8.1.4-alpine
+    working_directory: *workdir
 
 jobs:
   checkout_code:
@@ -38,22 +44,52 @@ jobs:
     executor: my-executor
     steps:
       - attach_workspace:
-          at: ~/repo
-      - run: yarn lint
+          at: *workdir
+      - run: yarn lint:report-forced
+      - persist_to_workspace:
+          root: .
+          paths: reports/lint_issues.json
 
   test_cov:
     executor: my-executor
     steps:
       - attach_workspace:
-          at: ~/repo
+          at: *workdir
       - run: yarn test:cov
+      - persist_to_workspace:
+          root: .
+          paths:
+            - coverage/lcov.info
+            - reports/test-reporter.xml
 
   build:
     executor: my-executor
     steps:
       - attach_workspace:
-          at: ~/repo
+          at: *workdir
       - run: yarn build
+
+  sonar_pullrequest:
+    executor: sonar-executor
+    steps:
+      - attach_workspace:
+          at: /home/circleci/repo
+      - run: mkdir -p /root/.ssh && echo 'github.com ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAq2A7hRGmdnm9tUDbO9IDSwBK6TbQa+PXYPCPy6rbTrTtw7PHkccKrpp0yVhp5HdEIcKr6pLlVDBfOLX9QUsyCOV0wzfjIJNlGEYsdlLJizHhbn2mUjvSAHQqZETYP81eFzLQNnPHt4EVVUh7VfDESU84KezmD5QlWpXLmvU31/yMf+Se8xhHTvKSCZIFImWwoG6mbUoWf9nzpIoaSjB+weqqUUmpaaasXVal72J+UX2B+2RPW3RcT0eOzQgqlJL3RKrTJvdsjE3JEAvGq3lGHSZXy28G3skua2SmVi/w4yCE6gbODqnTWlg7+wC604ydGXA8VJiS5ap43JXiUFFAaQ==' > /root/.ssh/known_hosts
+
+      - run: git fetch --all
+      - run: git branch -D master
+      - run: git rev-parse origin/master
+
+      - run: ./node_modules/sonar-scanner/bin/sonar-scanner --version
+      - run: ./node_modules/sonar-scanner/bin/sonar-scanner -Dsonar.organization=bikecoders -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=$SONARCLOUD_TOKEN -Dsonar.pullrequest.base=master -Dsonar.pullrequest.branch=implement-health-check-end-point -Dsonar.pullrequest.key=3 -Dsonar.pullrequest.provider=GitHub -Dsonar.pullrequest.github.repository=bikecoders/npm-package-stats
+
+  sonar:
+    executor: sonar-executor
+    steps:
+      - attach_workspace:
+          at: /home/circleci/repo
+      - run: ./node_modules/sonar-scanner/bin/sonar-scanner --version
+      - run: ./node_modules/sonar-scanner/bin/sonar-scanner -Dsonar.organization=bikecoders -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=$SONARCLOUD_TOKEN -Dsonar.branch.name=implement-health-check-end-point -Dsonar.branch.target=master
 
 workflows:
   version: 2
@@ -69,3 +105,7 @@ workflows:
       - build:
           requires:
             - checkout_code
+      - sonar_pullrequest:
+          requires:
+            - linter
+            - test_cov
