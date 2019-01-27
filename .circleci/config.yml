@@ -49,7 +49,7 @@ jobs:
     steps:
       - attach_workspace:
           at: *workdir
-      - run: yarn lint:report
+      - run: yarn lint:report-forced
       - persist_to_workspace:
           root: .
           paths: reports/lint_issues.json
@@ -78,14 +78,8 @@ jobs:
     steps:
       - attach_workspace:
           at: /home/circleci/repo
-      - run: ls -l
-      - run: ls -l reports coverage/lcov.info
-      - run: chmod -R 777 coverage/lcov.info reports/*
-      - run: ls -l reports coverage/lcov.info
       - run: sonar-scanner --version
-      - run: sonar-scanner -Dsonar.organization=bikecoders -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=$SONARCLOUD_TOKEN
-      # - run: sonar-scanner --version
-      # - run: sonar-scanner -Dsonar.organization=bikecoders -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=$SONARCLOUD_TOKEN
+      - run: sonar-scanner -Dsonar.organization=bikecoders -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=$SONARCLOUD_TOKEN -Dsonar.pullrequest.base=master -Dsonar.pullrequest.branch=$CIRCLE_BRANCH -Dsonar.pullrequest.key="`echo $CIRCLE_PULL_REQUEST | cut -d'/' -f7`" -Dsonar.pullrequest.provider=GitHub -Dsonar.pullrequest.github.repository=bikecoders/npm-package-stats
 
 workflows:
   version: 2
