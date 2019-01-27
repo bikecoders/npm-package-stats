@@ -6,13 +6,23 @@ var_1: &default_docker_image circleci/node:10.15
 
 var_2: &cache_key v1-dependencies-{{ checksum "yarn.lock" }}
 
+var_3: &workdir /home/circleci/repo
+
 version: 2.1
 
 executors:
   my-executor:
     docker:
       - image: *default_docker_image
-    working_directory: ~/repo
+    working_directory: *workdir
+  sonar-executor:
+    docker:
+      # - image: newtmitch/sonar-scanner # Error
+      - image: emeraldsquad/sonar-scanner # doesnt't pull the reports
+      # - image: zaquestion/sonarqube-scanner # error
+      # - image: skilldlabs/sonar-scanner # error
+      # - image: sonarqube # Error
+    working_directory: *workdir
 
 jobs:
   checkout_code:
@@ -38,22 +48,44 @@ jobs:
     executor: my-executor
     steps:
       - attach_workspace:
-          at: ~/repo
-      - run: yarn lint
+          at: *workdir
+      - run: yarn lint:report
+      - persist_to_workspace:
+          root: .
+          paths: reports/lint_issues.json
 
   test_cov:
     executor: my-executor
     steps:
       - attach_workspace:
-          at: ~/repo
+          at: *workdir
       - run: yarn test:cov
+      - persist_to_workspace:
+          root: .
+          paths:
+            - coverage/lcov.info
+            - reports/test-reporter.xml
 
   build:
     executor: my-executor
     steps:
       - attach_workspace:
-          at: ~/repo
+          at: *workdir
       - run: yarn build
+
+  sonar:
+    executor: sonar-executor
+    steps:
+      - attach_workspace:
+          at: /home/circleci/repo
+      - run: ls -l
+      - run: ls -l reports coverage/lcov.info
+      - run: chmod -R 777 coverage/lcov.info reports/*
+      - run: ls -l reports coverage/lcov.info
+      - run: sonar-scanner --version
+      - run: sonar-scanner -Dsonar.organization=bikecoders -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=$SONARCLOUD_TOKEN
+      # - run: sonar-scanner --version
+      # - run: sonar-scanner -Dsonar.organization=bikecoders -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=$SONARCLOUD_TOKEN
 
 workflows:
   version: 2
@@ -69,3 +101,7 @@ workflows:
       - build:
           requires:
             - checkout_code
+      - sonar:
+          requires:
+            - linter
+            - test_cov
