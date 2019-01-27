@@ -41,12 +41,19 @@ jobs:
           at: ~/repo
       - run: yarn lint
 
-  test:
+  test_cov:
     executor: my-executor
     steps:
       - attach_workspace:
           at: ~/repo
-      - run: yarn test
+      - run: yarn test:cov
+
+  build:
+    executor: my-executor
+    steps:
+      - attach_workspace:
+          at: ~/repo
+      - run: yarn build
 
 workflows:
   version: 2
@@ -56,6 +63,9 @@ workflows:
       - linter:
           requires:
             - checkout_code
-      - test:
+      - test_cov:
+          requires:
+            - checkout_code
+      - build:
           requires:
             - checkout_code
