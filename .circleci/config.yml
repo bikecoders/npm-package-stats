@@ -4,12 +4,7 @@
 #
 var_1: &default_docker_image circleci/node:10.15
 
-var_2: &cache_key v1-dependencies-{{ checksum "package.json" }}
-
-var_3: &yarn_install
-  run:
-    name: Running Yarn install
-    command: yarn install
+var_2: &cache_key v1-dependencies-{{ checksum "yarn.lock" }}
 
 version: 2.1
 
@@ -20,48 +15,47 @@ executors:
     working_directory: ~/repo
 
 jobs:
-  install-dependencies:
+  checkout_code:
     executor: my-executor
     steps:
       - checkout
-
       # Download and cache dependencies
       - restore_cache:
           keys:
           - *cache_key
           # fallback to using the latest cache if no exact match is found
           - v1-dependencies-
-
-      - *yarn_install
-
+      - run: yarn install
       - save_cache:
           paths:
             - node_modules
           key: *cache_key
+      - persist_to_workspace:
+          root: .
+          paths: .
 
   linter:
     executor: my-executor
     steps:
-      - checkout
-      - restore_cache:
-          key: *cache_key
-      - *yarn_install
+      - attach_workspace:
+          at: ~/repo
       - run: yarn lint
 
   test:
     executor: my-executor
     steps:
-      - checkout
-      - restore_cache:
-          key: *cache_key
-      - *yarn_install
+      - attach_workspace:
+          at: ~/repo
       - run: yarn test
 
 workflows:
   version: 2
-  check-linter:
+  tests:
     jobs:
-      - linter
-  check-test:
-    jobs:
-      - test
+      - checkout_code
+      - linter:
+          requires:
+            - checkout_code
+      - test:
+          requires:
+            - checkout_code
