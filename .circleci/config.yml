@@ -39,7 +39,10 @@ jobs:
     steps:
       - attach_workspace:
           at: ~/repo
-      - run: yarn lint
+      - run: yarn lint:report
+      - persist_to_workspace:
+          root: .
+          paths: reports/lint_issues.json
 
   test_cov:
     executor: my-executor
@@ -47,6 +50,11 @@ jobs:
       - attach_workspace:
           at: ~/repo
       - run: yarn test:cov
+      - persist_to_workspace:
+          root: .
+          paths:
+            - coverage/lcov.info
+            - reports/test-reporter.xml
 
   build:
     executor: my-executor
@@ -54,6 +62,16 @@ jobs:
       - attach_workspace:
           at: ~/repo
       - run: yarn build
+
+  sonar:
+    executor: my-executor
+    steps:
+      - attach_workspace:
+          at: ~/repo
+      - run: ls -l ./node_modules/sonar-scanner/bin/sonar-scanner
+      - run: chmod +x ./node_modules/sonar-scanner/bin/sonar-scanner
+      - run: sudo ./node_modules/sonar-scanner/bin/sonar-scanner --version
+      # - run: yarn test:sonar -Dsonar.organization=bikecoders -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=$SONARCLOUD_TOKEN
 
 workflows:
   version: 2
@@ -69,3 +87,7 @@ workflows:
       - build:
           requires:
             - checkout_code
+      - sonar:
+          requires:
+            - linter
+            - test_cov
