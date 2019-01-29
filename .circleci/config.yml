@@ -45,7 +45,7 @@ jobs:
     steps:
       - attach_workspace:
           at: *workdir
-      - run: yarn lint:report-forced
+      - run: yarn lint:report
       - persist_to_workspace:
           root: .
           paths: reports/lint_issues.json
@@ -74,26 +74,22 @@ jobs:
     steps:
       - attach_workspace:
           at: /home/circleci/repo
-      - run: mkdir -p /root/.ssh && echo 'github.com ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAq2A7hRGmdnm9tUDbO9IDSwBK6TbQa+PXYPCPy6rbTrTtw7PHkccKrpp0yVhp5HdEIcKr6pLlVDBfOLX9QUsyCOV0wzfjIJNlGEYsdlLJizHhbn2mUjvSAHQqZETYP81eFzLQNnPHt4EVVUh7VfDESU84KezmD5QlWpXLmvU31/yMf+Se8xhHTvKSCZIFImWwoG6mbUoWf9nzpIoaSjB+weqqUUmpaaasXVal72J+UX2B+2RPW3RcT0eOzQgqlJL3RKrTJvdsjE3JEAvGq3lGHSZXy28G3skua2SmVi/w4yCE6gbODqnTWlg7+wC604ydGXA8VJiS5ap43JXiUFFAaQ==' > /root/.ssh/known_hosts
+      # Create extra env Variables
+      - run: cat ./.circleci/scripts/extra-variables.sh >> $BASH_ENV
+      # Fix CircleCI repo references
+      - run: ./.circleci/scripts/fix-circleci-repo-ref.sh
+      - run: ./node_modules/sonar-scanner/bin/sonar-scanner -Dsonar.organization=bikecoders -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=$SONARCLOUD_TOKEN -Dsonar.pullrequest.base=$BC_PR_BASE_BRANCH -Dsonar.pullrequest.branch=$BC_PR_BRANCH -Dsonar.pullrequest.key=$BC_PR_ID
 
-      - run: git fetch --all
-      - run: git branch -D master
-      - run: git rev-parse origin/master
-
-      - run: ./node_modules/sonar-scanner/bin/sonar-scanner --version
-      - run: ./node_modules/sonar-scanner/bin/sonar-scanner -Dsonar.organization=bikecoders -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=$SONARCLOUD_TOKEN -Dsonar.pullrequest.base=master -Dsonar.pullrequest.branch=implement-health-check-end-point -Dsonar.pullrequest.key=3 -Dsonar.pullrequest.provider=GitHub -Dsonar.pullrequest.github.repository=bikecoders/npm-package-stats
-
-  sonar:
+  sonar_master:
     executor: sonar-executor
     steps:
       - attach_workspace:
           at: /home/circleci/repo
-      - run: ./node_modules/sonar-scanner/bin/sonar-scanner --version
-      - run: ./node_modules/sonar-scanner/bin/sonar-scanner -Dsonar.organization=bikecoders -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=$SONARCLOUD_TOKEN -Dsonar.branch.name=implement-health-check-end-point -Dsonar.branch.target=master
+      - run: ./node_modules/sonar-scanner/bin/sonar-scanner -Dsonar.organization=bikecoders -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=$SONARCLOUD_TOKEN
 
 workflows:
   version: 2
-  tests:
+  analize:
     jobs:
       - checkout_code
       - linter:
@@ -109,3 +105,14 @@ workflows:
           requires:
             - linter
             - test_cov
+          filters:
+            branches:
+              ignore: master
+      - sonar_master:
+          requires:
+            - linter
+            - test_cov
+          filters:
+            branches:
+              only: master
+

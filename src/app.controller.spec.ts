@@ -11,14 +11,14 @@ describe('AppController', () => {
       providers: [AppService],
     }).compile();
 
-    appController = app.get<AppController>(AppController)
+    appController = app.get<AppController>(AppController);
   });
 
   describe('root', () => {
     it('should return "Hello World!"', () => {
       expect(appController.healthCheck()).toEqual({
         status: true,
-        message: 'I\'m ok, thank you'
+        message: 'I\'m ok, thank you',
       });
     });
   });

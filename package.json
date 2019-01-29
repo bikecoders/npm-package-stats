@@ -14,13 +14,12 @@
     "start:prod": "node dist/main.js",
     "lint": "tslint -p tsconfig.json -c tslint.json",
     "lint:report": "yarn --silent run lint --format json > reports/lint_issues.json",
-    "lint:report-forced": "yarn --silent run lint --format json --force > reports/lint_issues.json",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "pretest:sonar-local": "yarn lint:report-forced && yarn test:cov",
+    "pretest:sonar-local": "yarn lint:report && yarn test:cov",
     "test:sonar-local": "sonar-scanner"
   },
   "dependencies": {
