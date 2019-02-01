@@ -68,6 +68,9 @@ jobs:
       - attach_workspace:
           at: *workdir
       - run: yarn build
+      - persist_to_workspace:
+          root: .
+          paths: dist
 
   sonar_pullrequest:
     executor: sonar-executor
@@ -87,11 +90,24 @@ jobs:
           at: /home/circleci/repo
       - run: ./node_modules/sonar-scanner/bin/sonar-scanner -Dsonar.organization=bikecoders -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=$SONARCLOUD_TOKEN
 
+  deploy:
+    executor: my-executor
+    steps:
+      - attach_workspace:
+          at: /home/circleci/repo
+      - add_ssh_keys
+      - run: echo "$know_host_server_value" >> ~/.ssh/known_hosts
+      - run: .circleci/deployment/deploy.sh
+
 workflows:
   version: 2
   analize:
     jobs:
-      - checkout_code
+      - checkout_code:
+        # Don't do this on tags
+        filters:
+          tags:
+            ignore: /.*/
       - linter:
           requires:
             - checkout_code
@@ -116,3 +132,17 @@ workflows:
             branches:
               only: master
 
+  deploy:
+    jobs:
+      - checkout_code:
+          filters:
+            tags:
+              only: /^v.*/
+            branches:
+              ignore: /.*/
+      - build:
+          requires:
+            - checkout_code
+      - deploy:
+          requires:
+            - build
