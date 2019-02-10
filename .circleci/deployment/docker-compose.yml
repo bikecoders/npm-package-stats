@@ -1,0 +1,13 @@
+# docker-compose for deployment
+version: "3"
+
+services:
+  server:
+    image: node:10.15-alpine
+    restart: always
+    ports:
+      - 3000:3000
+    working_dir: /repo
+    command: node ./dist/main.js
+    volumes:
+      - ./:/repo
