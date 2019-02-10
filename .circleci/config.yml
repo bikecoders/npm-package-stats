@@ -103,8 +103,8 @@ workflows:
   version: 2
   analize:
     jobs:
+      # Don't do this on tags
       - checkout_code:
-        # Don't do this on tags
         filters:
           tags:
             ignore: /.*/
@@ -134,10 +134,13 @@ workflows:
 
   deploy:
     jobs:
+      # Do this only on tags
       - checkout_code:
           filters:
             tags:
               only: /^v.*/
+            branches:
+              only: master
       - build:
           requires:
             - checkout_code
