@@ -144,6 +144,16 @@ workflows:
       - build:
           requires:
             - checkout_code
+          filters:
+            tags:
+              only: /^v.*/
+            branches:
+              ignore: /.*/
       - deploy:
           requires:
             - build
+          filters:
+            tags:
+              only: /^v.*/
+            branches:
+              ignore: /.*/
