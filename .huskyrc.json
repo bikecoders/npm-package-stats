@@ -1,5 +1,6 @@
 {
   "hooks": {
+    "commit-msg": "commitlint -e",
     "pre-commit": "yarn lint && yarn prestart:prod",
     "pre-push": "yarn test:cov && yarn test:e2e"
   }
