@@ -62,3 +62,6 @@ reports/
 src/environments/*
 !src/environments/example.env
 ### Project ###
+
+# Database
+database/*

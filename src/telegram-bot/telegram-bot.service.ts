@@ -1,6 +1,10 @@
 import { Injectable } from '@nestjs/common';
 
+import { of } from 'rxjs';
+import { catchError } from 'rxjs/operators';
+
 import * as TelegramBot from 'node-telegram-bot-api';
+import { User } from 'src/models/user.interface';
 import { UsersService } from 'src/users/users.service';
 
 @Injectable()
@@ -38,9 +42,16 @@ export class TelegramBotService {
     bot.onText(/\/start/, (msg, match) => {
       const chatId = msg.chat.id;
 
-      userService.create({ id: chatId.toString() })
-        .subscribe(() => {
-          bot.sendMessage(chatId, 'User created');
+      // TODO: catch exception on duplicated user
+      userService.create({ chatId: chatId.toString() }).pipe(
+        catchError((err) => {
+          return of({
+            chatId: `${chatId} - Repeated`,
+          } as User);
+        }),
+      )
+        .subscribe(userCreated => {
+          bot.sendMessage(chatId, `${userCreated.chatId} - User created`);
         });
     });
   }
