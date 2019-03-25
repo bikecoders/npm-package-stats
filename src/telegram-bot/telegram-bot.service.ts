@@ -43,13 +43,7 @@ export class TelegramBotService {
       const chatId = msg.chat.id;
 
       // TODO: catch exception on duplicated user
-      userService.create({ chatId: chatId.toString() }).pipe(
-        catchError((err) => {
-          return of({
-            chatId: `${chatId} - Repeated`,
-          } as User);
-        }),
-      )
+      userService.create({ chatId: chatId.toString() })
         .subscribe(userCreated => {
           bot.sendMessage(chatId, `${userCreated.chatId} - User created`);
         });

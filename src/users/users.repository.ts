@@ -2,7 +2,8 @@ import { Injectable } from '@nestjs/common';
 
 import * as Datastore from 'nedb-promises';
 
-import { from, Observable } from 'rxjs';
+import { from, Observable, of, throwError } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 
 import { User } from '../models/user.interface';
 
@@ -19,11 +20,20 @@ export class UsersRepository {
       filename: path.resolve(__dirname + '../../../database/users.db'),
       autoload: true,
     };
+
     this.db = Datastore.create(databaseOptions);
     this.db.ensureIndex({ fieldName: 'chatId', unique: true });
   }
 
   create(user: User): Observable<User> {
-    return from(this.db.insert(user));
+    return from(this.db.insert(user)).pipe(
+      catchError<User, User>((err) => {
+        if (err.errorType === 'uniqueViolated') {
+          return of(user);
+        }
+
+        return throwError(err);
+      }),
+    );
   }
 }
