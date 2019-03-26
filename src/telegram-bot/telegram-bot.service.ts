@@ -13,6 +13,8 @@ export class TelegramBotService {
    */
   bot: TelegramBot;
 
+  readonly startCommand = /\/start/;
+
   constructor(private userService: UsersService) {
     // replace the value below with the Telegram token you receive from @BotFather
     const token = process.env.TELEGRAM_BOT_KEY;
@@ -34,10 +36,11 @@ export class TelegramBotService {
    * /start command listener
    */
   private commandListenerStart() {
-    this.bot.onText(/\/start/, (msg, match) => {
+    this.bot.onText(this.startCommand, msg => {
       const chatId = msg.chat.id;
       const user: User = { chatId: chatId.toString() };
 
+      // TODO catch any error
       this.userService.create(user)
         .subscribe(_ => {
           this.sendMessageMarkdown(chatId, Messages.welcome);
