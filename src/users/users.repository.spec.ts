@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { UsersRepository } from './users.repository';
 
 import * as Datastore from 'nedb-promises';
-import { User } from 'dist/models/user.interface';
+import { User } from '../models/user.interface';
 
 describe('UsersRepository', () => {
   let repository: UsersRepository;
