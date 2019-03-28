@@ -1,0 +1,16 @@
+# docker-compose for development
+version: "3"
+
+services:
+  server:
+    image: circleci/node:10.15
+    ports:
+      - 3000:3000
+      - 9229:9229
+    user: $UID:0
+    working_dir: /repo
+    command: echo "Use yarn start or whatever"
+    env_file:
+      - src/environments/.env
+    volumes:
+      - ./:/repo

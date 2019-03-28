@@ -57,3 +57,11 @@ reports/
 
 # End of https://www.gitignore.io/api/sonarqube
 ### SonarQube ###
+
+### Project ###
+src/environments/*
+!src/environments/example.env
+### Project ###
+
+# Database
+database/*
