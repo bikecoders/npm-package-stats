@@ -551,6 +551,11 @@ anymatch@^2.0.0:
     micromatch "^3.1.4"
     normalize-path "^2.1.1"
 
+api-npm@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/api-npm/-/api-npm-1.0.0.tgz#5b33589a8c58ebe78721d3c9a11f6e8182f00a26"
+  integrity sha1-WzNYmoxY6+eHIdPJoR9ugYLwCiY=
+
 append-field@^0.1.0:
   version "0.1.0"
   resolved "https://registry.yarnpkg.com/append-field/-/append-field-0.1.0.tgz#6ddc58fa083c7bc545d3c5995b2830cc2366d44a"
@@ -1215,6 +1220,11 @@ ci-info@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/ci-info/-/ci-info-2.0.0.tgz#67a9e964be31a51e15e5010d58e6f12834002f46"
   integrity sha512-5tK7EtrZ0N+OLFMthtqOj4fI2Jeb88C4CAZPu25LDVUgXJ0A3Js4PMGqrn0JU1W0Mh1/Z8wZzYPxqUrXeBboCQ==
+
+class-transformer@^0.2.0:
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/class-transformer/-/class-transformer-0.2.0.tgz#e54b34112e8ef7f913ef938c81fed8ed949fc9c7"
+  integrity sha512-6N/5WkEmLZCKxyC2CAPYQIJt3pDZzDFag7AExpyWRm7CjaS/U62VDRU+Z2AUrQaNpnuiXRlli0so4PJUqGSVZQ==
 
 class-utils@^0.3.5:
   version "0.3.6"
@@ -4957,7 +4967,7 @@ redent@^2.0.0:
     indent-string "^3.0.0"
     strip-indent "^2.0.0"
 
-reflect-metadata@^0.1.12:
+reflect-metadata@^0.1.13:
   version "0.1.13"
   resolved "https://registry.yarnpkg.com/reflect-metadata/-/reflect-metadata-0.1.13.tgz#67ae3ca57c972a2aa1642b10fe363fe32d49dc08"
   integrity sha512-Ts1Y/anZELhSsjMcU605fU9RE4Oi3p5ORujwbIKXfWa+0Zxs510Qrmrce5/Jowq3cHSZSJqBjypxmHarc+vEWg==
