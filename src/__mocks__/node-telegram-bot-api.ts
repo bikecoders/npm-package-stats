@@ -7,9 +7,15 @@ interface IOnTextTelegramBot {
 }
 
 class TelegramBot {
+  public token: string;
+  public constructorOptions;
+
   private onTextsValue: IOnTextTelegramBot = {};
 
-  constructor(public token: string, public constructorOptions) { }
+  constructor(token: string, constructorOptions?) {
+    this.token = token;
+    this.constructorOptions = constructorOptions;
+  }
 
   getOnTexts(regex: RegExp): onTextCallback {
     return this.onTextsValue[regex.toString()];
