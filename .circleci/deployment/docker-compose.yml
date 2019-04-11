@@ -11,3 +11,5 @@ services:
     command: node ./dist/main.js
     volumes:
       - ./:/repo
+    env_file:
+      - ./.envProd
