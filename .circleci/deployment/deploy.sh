@@ -3,9 +3,10 @@ log_prefix=" --- ";
 # Delete the project and destroy containers
 function restart_everything() {
   echo "$log_prefix Restarting everything";
+  # Remove containers
   ssh $remote_server_user@$remote_server_ip "cd $remote_server_path && docker-compose down";
-  ssh $remote_server_user@$remote_server_ip "rm -R $remote_server_path";
-  ssh $remote_server_user@$remote_server_ip "mkdir -p $remote_server_path";
+  # Remove all files but the database directory
+  ssh $remote_server_user@$remote_server_ip "cd $remote_server_path && find . | grep -v 'database/*' | xargs rm -R";
 }
 
 # Copy files needed to the server
