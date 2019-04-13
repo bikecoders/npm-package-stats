@@ -3,9 +3,16 @@ log_prefix=" --- ";
 # Delete the project and destroy containers
 function restart_everything() {
   echo "$log_prefix Restarting everything";
+  # Remove containers
   ssh $remote_server_user@$remote_server_ip "cd $remote_server_path && docker-compose down";
-  ssh $remote_server_user@$remote_server_ip "rm -R $remote_server_path";
-  ssh $remote_server_user@$remote_server_ip "mkdir -p $remote_server_path";
+  # Remove all files but the database directory
+  ssh $remote_server_user@$remote_server_ip "cd $remote_server_path && ls . | grep -v 'database/*' | xargs rm -R";
+}
+
+function generate_files() {
+  echo "$log_prefix Generating files";
+  # Generate envProd file
+  node ./.circleci/deployment/scripts/create-env-prod.js
 }
 
 # Copy files needed to the server
@@ -13,10 +20,14 @@ function copy_files() {
   echo "$log_prefix Copying files";
   # package.json
   scp ./package.json $remote_server_user@$remote_server_ip:$remote_server_path
+  # Yarn lock
+  scp ./yarn.lock $remote_server_user@$remote_server_ip:$remote_server_path
   # Built project
   scp -r ./dist $remote_server_user@$remote_server_ip:$remote_server_path
   # docker-compose
   scp ./.circleci/deployment/docker-compose.yml $remote_server_user@$remote_server_ip:$remote_server_path
+  # envProdFile
+  scp ./src/environments/.envProd $remote_server_user@$remote_server_ip:$remote_server_path
 }
 
 function install_dependencies() {
@@ -61,6 +72,7 @@ function exit_indicating_status() {
 }
 
 restart_everything;
+generate_files;
 copy_files;
 install_dependencies;
 start_project;

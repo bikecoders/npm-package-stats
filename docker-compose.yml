@@ -11,6 +11,6 @@ services:
     working_dir: /repo
     command: echo "Use yarn start or whatever"
     env_file:
-      - src/environments/.env
+      - src/environments/.envDev
     volumes:
       - ./:/repo

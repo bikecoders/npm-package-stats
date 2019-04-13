@@ -60,7 +60,7 @@ reports/
 
 ### Project ###
 src/environments/*
-!src/environments/example.env
+!src/environments/.envExample
 ### Project ###
 
 # Database
