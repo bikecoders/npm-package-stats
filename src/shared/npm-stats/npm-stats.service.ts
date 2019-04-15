@@ -20,7 +20,7 @@ export class NpmStatsService {
     const subject = new Subject<INMPStats>();
 
     const callback = (data: INMPStats | INMPStatsError) => {
-      // If there is an e5rror
+      // If there is an error
       if (!!(data as INMPStatsError).error) {
         subject.error(data);
       } else {
@@ -38,7 +38,7 @@ export class NpmStatsService {
   /**
    * To the actual date subtract the days specified.
    *
-   * @return the format would be 'YYYY/MM/DD'
+   * @return the format would be 'YYYY-MM-DD'
    *
    * @param days how many days passed
    */
