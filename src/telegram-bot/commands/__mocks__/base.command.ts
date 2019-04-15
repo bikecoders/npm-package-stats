@@ -14,6 +14,10 @@ export abstract class BaseCommand {
   ) {
   }
 
+  triggerCommand(msg: TelegramBot.Message, match: RegExpExecArray = null) {
+    this.commandFunction(msg, match);
+  }
+
   /**
    * Define in this method what the command is going to do
    */

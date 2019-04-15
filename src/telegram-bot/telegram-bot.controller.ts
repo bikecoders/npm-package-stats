@@ -7,6 +7,7 @@ import { UsersService } from '../users/service/users.service';
 
 import { AddCommand } from './commands/add/add.command';
 import { StartCommand } from './commands/start/start.command';
+import { StatsCommand } from './commands/stats/stats.command';
 
 @Controller()
 export class TelegramBotController {
@@ -18,6 +19,7 @@ export class TelegramBotController {
   // Commands
   private startCommand: StartCommand;
   private addCommand: AddCommand;
+  private statsCommand: StatsCommand;
 
   constructor(
     private userService: UsersService,
@@ -38,5 +40,6 @@ export class TelegramBotController {
   private createCommandListeners() {
     this.startCommand = new StartCommand(this.bot, this.userService);
     this.addCommand = new AddCommand(this.bot, this.npmStatsService, this.userService);
+    this.statsCommand = new StatsCommand(this.bot, this.npmStatsService, this.userService);
   }
 }

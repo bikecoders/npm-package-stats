@@ -10,7 +10,6 @@ import { NpmStatsService as NpmStatsServiceMock } from '../../../shared/npm-stat
 jest.mock('../../../shared/npm-stats/npm-stats.service');
 
 import { BaseCommand as BaseCommandMock } from '../__mocks__/base.command';
-import { triggerCommand } from '../__mocks__/utils';
 import { BaseCommand } from '../base.command';
 jest.mock('../base.command');
 
@@ -63,16 +62,15 @@ describe('Add', () => {
         const slug = 'angular';
         const msg = buildMessageReceived(`     ${slug}`);
 
-        triggerCommand(command, msg, null);
+        (command as unknown as BaseCommandMock).triggerCommand(msg);
 
-        expect((npmStatsService as unknown as NpmStatsServiceMock).slugToValidate).toEqual(slug);
+        expect((npmStatsService as unknown as NpmStatsServiceMock).slugToValidate).toEqual([slug]);
       });
 
       it('should indicate that the command is malformed', () => {
-        const slug = '';
         const msg = buildMessageReceived('');
 
-        triggerCommand(command, msg, null);
+        (command as unknown as BaseCommandMock).triggerCommand(msg);
 
         expect(sendMessageHTML).toHaveBeenCalledWith(
           bot,
@@ -91,7 +89,7 @@ describe('Add', () => {
         slug = 'angular';
         msg = buildMessageReceived(slug);
 
-        triggerCommand(command, msg, null);
+        (command as unknown as BaseCommandMock).triggerCommand(msg);
       });
 
       describe('Valid Package', () => {

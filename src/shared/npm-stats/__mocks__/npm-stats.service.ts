@@ -6,51 +6,81 @@ import { INMPStats, INMPStatsError } from '../shared/api-npm.model';
 
 export class NpmStatsService {
 
-  public subject = new Subject<any>();
+  public requests: Array<{
+    sub: Subject<any>,
+    slug: string,
+  }> = [];
 
-  public slugToValidate: string;
-  public slugToGetStats: string;
+  public slugToValidate: string[] = [];
+  public slugToGetStats: string[] = [];
+
+  public infoSent: Array<INMPStats | INMPStatsError> = [];
 
   // ---------- getStatsForYesterday ----------------
   getStatsForYesterday(slug: string): Observable<INMPStats | INMPStatsError> {
-    this.slugToGetStats = slug;
-    return this.subject.asObservable();
+    const sub = new Subject<any>();
+
+    this.requests.push({sub, slug});
+    this.slugToGetStats.push(slug);
+
+    return sub.asObservable();
   }
 
   getStatsForYesterdaySuccess() {
-    this.subject.next({
-      downloads: 1234,
-      start: '1991-08-08',
-      end: '1991-08-09',
-      package: this.slugToGetStats,
-    } as INMPStats);
+    this.requests.forEach((data) => {
+      const info = {
+        downloads: 1234,
+        start: '1991-08-08',
+        end: '1991-08-09',
+        package: data.slug,
+      } as INMPStats;
 
-    this.subject.complete();
+      this.infoSent.push(info);
+      data.sub.next(info);
+
+      data.sub.complete();
+    });
   }
 
   getStatsForYesterdayError() {
-    this.subject.error({
-      error: 'some random error',
-    } as INMPStatsError);
+    this.requests.forEach((data) => {
+      const info = {
+        error: 'some random error',
+      } as INMPStatsError;
 
-    this.subject.complete();
+      this.infoSent.push(info);
+      data.sub.error(info);
+
+      data.sub.complete();
+    });
   }
   // ---------- getStatsForYesterday ----------------
 
   // ---------- validateSlug ----------------
   validateSlug(slug: string): Observable<boolean> {
-    this.slugToValidate = slug;
-    return this.subject.asObservable();
+    const sub = new Subject<any>();
+
+    this.requests.push({ sub, slug });
+
+    this.slugToValidate.push(slug);
+
+    return sub.asObservable();
   }
 
   validateSlugSuccess() {
-    this.subject.next(true);
-    this.subject.complete();
+    this.requests.forEach((data) => {
+      data.sub.next(true);
+
+      data.sub.complete();
+    });
   }
 
   validateSlugFalse() {
-    this.subject.next(false);
-    this.subject.complete();
+    this.requests.forEach((data) => {
+      data.sub.next(false);
+
+      data.sub.complete();
+    });
   }
   // ---------- validateSlug ----------------
 

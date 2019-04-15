@@ -53,19 +53,30 @@ describe('User Model', () => {
     });
 
     describe('Packages Iterable', () => {
+      let randomPack2: IPackage;
+
+      beforeEach(() => {
+        randomPack2 = { npmSlug: 'randomSlug2' } as IPackage;
+
+        user.addPackage(randomPack);
+        user.addPackage(randomPack2);
+      });
+
       it('should return the package in an array', () => {
-        const randomPack2 = { npmSlug: 'randomSlug2' } as IPackage;
         const expectedPackagesIterable = [
           randomPack,
           randomPack2,
         ];
 
-        user.addPackage(randomPack);
-        user.addPackage(randomPack2);
-
         const packagesIt = user.packagesIterative;
 
         expect(packagesIt).toEqual(expectedPackagesIterable);
+      });
+
+      describe('N Packages', () => {
+        it('should return the number of packages', () => {
+          expect(user.nPackages).toEqual(2);
+        });
       });
     });
 

@@ -15,9 +15,20 @@ export class User {
 
   packages: IPackages;
 
+  /**
+   * Iterate the packages that has the user
+   * @returns IPackage[].
+   */
   get packagesIterative(): IPackage[] {
     return Object.keys(this.packages)
       .map((key) => this.packages[key]);
+  }
+
+  /**
+   * Get how many packages has the user
+   */
+  get nPackages(): number {
+    return this.packagesIterative.length;
   }
 
   constructor(chatId: number) {

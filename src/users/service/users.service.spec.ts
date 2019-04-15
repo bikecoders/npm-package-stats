@@ -12,6 +12,21 @@ describe('UsersService', () => {
   let service: UsersService;
   let userRepo: UsersRepository;
 
+  let userFound: User;
+  let pack: IPackage;
+
+  beforeEach(() => {
+    userFound = new User(1234);
+    pack = { npmSlug: 'angular' };
+
+    userFound.addPackage(pack);
+  });
+
+  beforeEach(() => {
+    // Clear all instances and calls to constructor and all methods:
+    (UsersRepository as unknown as jest.SpyInstance).mockClear();
+  });
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -39,9 +54,6 @@ describe('UsersService', () => {
   });
 
   describe('Add Package', () => {
-    let userFound: User;
-    let pack: IPackage;
-
     // Spies
     let getUserSpy: jasmine.Spy;
     let hasPackageSpy: jasmine.Spy;
@@ -52,13 +64,10 @@ describe('UsersService', () => {
     };
 
     beforeEach(() => {
-      userFound = new User(1234);
-      pack = { npmSlug: 'angular'};
-      userFound.addPackage(pack);
-
       // Spies
-      getUserSpy = spyOn(userRepo, 'getUser').and
+      getUserSpy = spyOn(service, 'getUser').and
         .returnValue(of(userFound));
+
       hasPackageSpy = spyOn(userFound, 'hasPackage').and.callThrough();
     });
 
@@ -104,6 +113,33 @@ describe('UsersService', () => {
 
         expect(userFound.hasPackage(newPackage.npmSlug)).toBeTruthy();
       });
+    });
+  });
+
+  describe('Get User', () => {
+    let chatId: number;
+
+    beforeEach(() => {
+      chatId = 1234;
+
+      // Spies
+      spyOn(userRepo, 'getUser').and
+        .returnValue(of(userFound));
+    });
+
+    it('should get the user using the repository', () => {
+      service.getUser(chatId);
+
+      expect(userRepo.getUser).toHaveBeenCalledWith(chatId);
+    });
+
+    it('should return the user gotten', () => {
+      let userGotten: User;
+
+      service.getUser(chatId)
+        .subscribe((uFound) => (userGotten = uFound));
+
+      expect(userFound).toEqual(userGotten);
     });
   });
 });

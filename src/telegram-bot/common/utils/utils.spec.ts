@@ -19,7 +19,9 @@ describe('Utils', () => {
 
     // spies
     beforeEach(() => {
-      botSendMessageSpy = spyOn(bot, 'sendMessage');
+      const voidPromise = new Promise(() => Promise.resolve(true));
+
+      botSendMessageSpy = spyOn(bot, 'sendMessage').and.returnValue(voidPromise);
     });
 
     it('should always indicate the parse mode is HTML', () => {

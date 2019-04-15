@@ -9,6 +9,8 @@ import { AddCommand } from './commands/add/add.command';
 jest.mock('./commands/add/add.command');
 import { StartCommand } from './commands/start/start.command';
 jest.mock('./commands/start/start.command');
+import { StatsCommand } from './commands/stats/stats.command';
+jest.mock('./commands/stats/stats.command');
 
 describe('TelegramBotController', () => {
   let service: TelegramBotController;
@@ -57,6 +59,10 @@ describe('TelegramBotController', () => {
 
     it('should init add command', () => {
       expect(AddCommand).toHaveBeenCalledWith(bot, npmStatsService, userService);
+    });
+
+    it('should init stats command', () => {
+      expect(StatsCommand).toHaveBeenCalledWith(bot, npmStatsService, userService);
     });
   });
 });
