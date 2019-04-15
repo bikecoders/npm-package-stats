@@ -15,6 +15,11 @@ export class User {
 
   packages: IPackages;
 
+  get packagesIterative(): IPackage[] {
+    return Object.keys(this.packages)
+      .map((key) => this.packages[key]);
+  }
+
   constructor(chatId: number) {
     this.chatId = chatId;
     this.packages = {};

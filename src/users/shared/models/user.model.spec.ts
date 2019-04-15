@@ -52,6 +52,23 @@ describe('User Model', () => {
       });
     });
 
+    describe('Packages Iterable', () => {
+      it('should return the package in an array', () => {
+        const randomPack2 = { npmSlug: 'randomSlug2' } as IPackage;
+        const expectedPackagesIterable = [
+          randomPack,
+          randomPack2,
+        ];
+
+        user.addPackage(randomPack);
+        user.addPackage(randomPack2);
+
+        const packagesIt = user.packagesIterative;
+
+        expect(packagesIt).toEqual(expectedPackagesIterable);
+      });
+    });
+
     describe('To Json', () => {
       it('should return the right json format', () => {
         const userJson = user.toJson();
