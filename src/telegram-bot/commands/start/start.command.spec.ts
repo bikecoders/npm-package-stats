@@ -14,7 +14,6 @@ jest.mock('../../../users/service/users.service');
 import { User } from '../../../users/shared/models';
 
 import { BaseCommand as BaseCommandMock } from '../__mocks__/base.command';
-import { triggerCommand } from '../__mocks__/utils';
 import { BaseCommand } from '../base.command';
 jest.mock('../base.command');
 
@@ -64,7 +63,7 @@ describe('Start', () => {
     it('should try create the user', () => {
       const createSpy = spyOn(userService, 'create').and.returnValue(NEVER);
 
-      triggerCommand(command, messageReceived, null);
+      (command as unknown as BaseCommandMock).triggerCommand(messageReceived);
 
       expect(createSpy).toHaveBeenCalledWith(new User(newUserId));
     });
@@ -72,7 +71,7 @@ describe('Start', () => {
     it('should send the welcome message', () => {
       spyOn(userService, 'create').and.returnValue(of({}));
 
-      triggerCommand(command, messageReceived, null);
+      (command as unknown as BaseCommandMock).triggerCommand(messageReceived);
 
       expect(sendMessageHTML).toHaveBeenCalledWith(
         bot,

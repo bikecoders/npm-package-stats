@@ -23,7 +23,7 @@ export class UsersService {
    * @param slug THe slug of the npm package
    */
   addPackage(chatId: number, slug: string): Observable<User> {
-    return this.usersRepository.getUser(chatId).pipe(
+    return this.getUser(chatId).pipe(
       switchMap(user => {
         if (!user.hasPackage(slug)) {
           const pack: IPackage = {
@@ -38,5 +38,9 @@ export class UsersService {
         }
       }),
     );
+  }
+
+  getUser(chatId: number): Observable<User>  {
+    return this.usersRepository.getUser(chatId);
   }
 }
