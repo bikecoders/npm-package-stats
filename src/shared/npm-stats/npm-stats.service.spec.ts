@@ -43,8 +43,8 @@ describe('NpmStatsService', () => {
       });
 
       it('should call \'getstats\' with the right start and end date', () => {
-        expect(npmAPI.from).toEqual(getDateOfXPassedDays(2));
-        expect(npmAPI.to).toEqual(getDateOfXPassedDays(1));
+        expect(npmAPI.from).toEqual(getDateOfXPassedDays(1));
+        expect(npmAPI.to).toEqual(getDateOfXPassedDays(0));
       });
     });
 
