@@ -1,4 +1,4 @@
-import { Utils } from '../../../../common';
+import { Utils } from '@common';
 
 export const wrongCommand = `I didn't understand 🤔
 You need to use the command <code>/add</code> in the following way:
