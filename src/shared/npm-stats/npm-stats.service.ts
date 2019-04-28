@@ -8,7 +8,6 @@ import { INMPStats, INMPStatsError } from './shared/api-npm.model';
 
 @Injectable()
 export class NpmStatsService {
-
   validateSlug(slug: string): Observable<boolean> {
     return this.getStatsForYesterday(slug).pipe(
       map(() => true),
