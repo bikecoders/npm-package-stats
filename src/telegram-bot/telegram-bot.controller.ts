@@ -2,8 +2,8 @@ import { Controller } from '@nestjs/common';
 
 import * as TelegramBot from 'node-telegram-bot-api';
 
-import { NpmStatsService } from '../shared/npm-stats/npm-stats.service';
-import { UsersService } from '../users/service/users.service';
+import { NpmStatsService } from '@shared/npm-stats/npm-stats.service';
+import { UsersService } from '@shared/users/service/users.service';
 
 import { AddCommand } from './commands/add/add.command';
 import { StartCommand } from './commands/start/start.command';

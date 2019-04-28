@@ -6,22 +6,23 @@ import { sendMessageHTML } from '../../common';
 jest.mock('../../common');
 
 import { StatsCommand } from './stats.command';
-import { UsersService } from '../../../users/service/users.service';
-jest.mock('../../../users/service/users.service');
-import { User, IPackage } from '../../../users/shared/models';
+import { UsersService } from '@shared/users/service/users.service';
+jest.mock('@shared/users/service/users.service');
+import { User, IPackage } from '@shared/users/shared/models';
 
 import { BaseCommand as BaseCommandMock } from '../__mocks__/base.command';
 import { BaseCommand } from '../base.command';
 jest.mock('../base.command');
 
-import { NpmStatsService } from '../../../shared/npm-stats/npm-stats.service';
-import { NpmStatsService as NpmStatsServiceMock } from '../../../shared/npm-stats/__mocks__/npm-stats.service';
-jest.mock('../../../shared/npm-stats/npm-stats.service');
+// Shared
+import { NpmStatsService } from '@shared/npm-stats/npm-stats.service';
+import { NpmStatsService as NpmStatsServiceMock } from '@shared/npm-stats/__mocks__/npm-stats.service';
+jest.mock('@shared/npm-stats/npm-stats.service');
+import { INMPStats } from '@shared/npm-stats/shared/api-npm.model';
 
 import { NEVER, of } from 'rxjs';
 
 import * as Messages from './common/messages.template';
-import { INMPStats } from 'src/shared/npm-stats/shared/api-npm.model';
 jest.mock('./common/messages.template');
 
 describe('Start', () => {

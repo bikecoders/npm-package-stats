@@ -1,13 +1,16 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
+import { of } from 'rxjs';
+
 import * as TelegramBot from 'node-telegram-bot-api';
 
+import { NpmStatsService } from '@shared/npm-stats/npm-stats.service';
+jest.mock('@shared/npm-stats/npm-stats.service');
+import { NpmStatsService as NpmStatsServiceMock } from '@shared/npm-stats/__mocks__/npm-stats.service';
+import { UsersService } from '@shared/users/service/users.service';
+jest.mock('@shared/users/service/users.service');
+
 import { AddCommand } from './add.command';
-import { UsersService } from '../../../users/service/users.service';
-jest.mock('../../../users/service/users.service');
-import { NpmStatsService } from '../../../shared/npm-stats/npm-stats.service';
-import { NpmStatsService as NpmStatsServiceMock } from '../../../shared/npm-stats/__mocks__/npm-stats.service';
-jest.mock('../../../shared/npm-stats/npm-stats.service');
 
 import { BaseCommand as BaseCommandMock } from '../__mocks__/base.command';
 import { BaseCommand } from '../base.command';
@@ -16,7 +19,6 @@ jest.mock('../base.command');
 import { sendMessageHTML } from '../../common';
 jest.mock('../../common/utils/utils');
 import { Template } from './common';
-import { of } from 'rxjs';
 
 describe('Add', () => {
   let command: AddCommand;
