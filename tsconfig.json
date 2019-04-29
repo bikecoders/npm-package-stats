@@ -8,11 +8,7 @@
     "target": "es6",
     "sourceMap": true,
     "outDir": "./dist",
-    "baseUrl": "./",
-    "paths": {
-      "@common": ["src/common/index"],
-      "@shared/*": ["src/shared/*"]
-    }
+    "baseUrl": "./"
   },
   "exclude": ["node_modules"]
 }

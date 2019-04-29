@@ -2,9 +2,8 @@ import * as TelegramBot from 'node-telegram-bot-api';
 
 import { BaseCommand } from '../base.command';
 
-import { UsersService } from '@shared/users/service/users.service';
-import { User } from '@shared/users/shared/models';
-
+import { UsersService } from '../../../users/service/users.service';
+import { User } from '../../../users/shared/models';
 import { Template } from './common';
 import { sendMessageHTML } from '../../common';
 

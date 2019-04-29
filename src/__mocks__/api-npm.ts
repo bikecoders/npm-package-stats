@@ -1,4 +1,4 @@
-import { INMPStats, INMPStatsError } from '@shared/npm-stats/shared/api-npm.model';
+import { INMPStats, INMPStatsError } from '../shared/npm-stats/shared/api-npm.model';
 
 type getStatCallback = (data: INMPStats | INMPStatsError) => void;
 

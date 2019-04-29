@@ -4,9 +4,8 @@ import { BaseCommand } from '../base.command';
 
 import { map, switchMap, mergeMap } from 'rxjs/operators';
 
-import { NpmStatsService } from '@shared/npm-stats/npm-stats.service';
-import { UsersService } from '@shared/users/service/users.service';
-
+import { NpmStatsService } from 'src/shared/npm-stats/npm-stats.service';
+import { UsersService } from '../../../users/service/users.service';
 import { sendMessageHTML } from '../../common';
 import * as Messages from './common/messages.template';
 
