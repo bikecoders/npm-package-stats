@@ -34,7 +34,7 @@ export class UsersRepository {
     const insertPromise: Promise<User> = this.db.insert(user.toJson());
 
     return from(insertPromise).pipe(
-      catchError<User, User>((err) => {
+      catchError<User, Observable<User>>((err) => {
         if (err.errorType === 'uniqueViolated') {
           return of(user);
         }
