@@ -8,6 +8,13 @@ var_2: &cache_key v1-dependencies-{{ checksum "yarn.lock" }}
 
 var_3: &workdir /home/circleci/repo
 
+var_4: &only-deploy-tags
+  filters:
+    tags:
+      only: /^v.*/
+    branches:
+      ignore: /.*/
+
 version: 2.1
 
 executors:
@@ -62,6 +69,13 @@ jobs:
             - coverage/lcov.info
             - reports/test-reporter.xml
 
+  test:
+    executor: my-executor
+    steps:
+      - attach_workspace:
+          at: *workdir
+      - run: yarn test
+
   build:
     executor: my-executor
     steps:
@@ -101,6 +115,7 @@ jobs:
 
 workflows:
   version: 2
+
   analize:
     jobs:
       # Don't do this on tags
@@ -134,16 +149,22 @@ workflows:
 
   deploy:
     jobs:
-      # Do this only on tags
-      - checkout_code:
-          filters:
-            tags:
-              only: /^v.*/
-            branches:
-              only: master
+      - checkout_code: *only-deploy-tags
       - build:
+          <<: *only-deploy-tags
+          requires:
+            - checkout_code
+      - linter:
+          <<: *only-deploy-tags
+          requires:
+            - checkout_code
+      - test:
+          <<: *only-deploy-tags
           requires:
             - checkout_code
       - deploy:
+          <<: *only-deploy-tags
           requires:
             - build
+            - linter
+            - test
