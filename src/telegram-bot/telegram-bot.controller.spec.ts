@@ -1,9 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { TelegramBotController } from './telegram-bot.controller';
 
-import { UsersService } from '@shared/users/service/users.service';
-jest.mock('@shared/users/service/users.service');
-import { NpmStatsService } from '@shared/npm-stats/npm-stats.service';
+import { UsersService } from '../users/service/users.service';
+jest.mock('../users/service/users.service');
+import { NpmStatsService } from '../shared/npm-stats/npm-stats.service';
 
 import { AddCommand } from './commands/add/add.command';
 jest.mock('./commands/add/add.command');

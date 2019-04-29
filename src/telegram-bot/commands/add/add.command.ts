@@ -1,11 +1,10 @@
 import * as TelegramBot from 'node-telegram-bot-api';
 
-import { NpmStatsService } from '@shared/npm-stats/npm-stats.service';
-import { UsersService } from '@shared/users/service/users.service';
-
 import { BaseCommand } from '../base.command';
 import { Template } from './common';
+import { NpmStatsService } from '../../../shared/npm-stats/npm-stats.service';
 import { sendMessageHTML } from '../../common';
+import { UsersService } from '../../../users/service/users.service';
 
 export class AddCommand extends BaseCommand {
   public static readonly COMMAND = /\/add/;

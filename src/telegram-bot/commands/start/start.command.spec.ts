@@ -9,9 +9,9 @@ import { sendMessageHTML } from '../../common';
 jest.mock('../../common/utils/utils');
 
 import { StartCommand } from './start.command';
-import { UsersService } from '@shared/users/service/users.service';
-jest.mock('@shared/users/service/users.service');
-import { User } from '@shared/users/shared/models';
+import { UsersService } from '../../../users/service/users.service';
+jest.mock('../../../users/service/users.service');
+import { User } from '../../../users/shared/models';
 
 import { BaseCommand as BaseCommandMock } from '../__mocks__/base.command';
 import { BaseCommand } from '../base.command';

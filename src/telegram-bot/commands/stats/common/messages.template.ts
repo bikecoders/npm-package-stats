@@ -1,6 +1,5 @@
-import { Utils } from '@common';
-
-import { INMPStats } from '@shared/npm-stats/shared/api-npm.model';
+import { INMPStats } from '../../../../shared/npm-stats/shared/api-npm.model';
+import { Utils } from '../../../../common';
 
 export const stat = (stats: INMPStats) =>
 `The stats of the package <a href="${Utils.buildNPMLink(stats.package)}">${stats.package}</a> are:
