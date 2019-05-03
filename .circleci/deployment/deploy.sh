@@ -32,7 +32,7 @@ function copy_files() {
 
 function install_dependencies() {
   echo "$log_prefix Installing dependencies";
-  ssh $remote_server_user@$remote_server_ip "docker run --rm -v $remote_server_path:/repo node:10.15-alpine /bin/ash -c 'cd /repo && yarn'";
+  ssh $remote_server_user@$remote_server_ip "docker run --rm -v $remote_server_path:/repo node:10.15-alpine /bin/ash -c 'cd /repo && yarn install --production=true'";
 }
 
 function start_project() {
