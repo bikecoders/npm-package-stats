@@ -2,35 +2,38 @@ import { Test, TestingModule } from '@nestjs/testing';
 
 import * as TelegramBot from 'node-telegram-bot-api';
 
+import { NEVER, of } from 'rxjs';
+
 import { sendMessageHTML } from '../../common';
 jest.mock('../../common');
 
-import { StatsCommand } from './stats.command';
-import { UsersService } from '../../../users/service/users.service';
-jest.mock('../../../users/service/users.service');
-import { User, IPackage } from '../../../users/shared/models';
+import { StatsFeature } from './stats.feature';
+import { UsersService } from '../../../shared/users/service/users.service';
+jest.mock('../../../shared/users/service/users.service');
+import { User, IPackage } from '../../../shared/users/shared/models';
 
 import { BaseCommand as BaseCommandMock } from '../__mocks__/base.command';
 import { BaseCommand } from '../base.command';
 jest.mock('../base.command');
 
+import { BotService } from '../../shared/bot/bot.service';
+jest.mock('../../shared/bot/bot.service');
 import { NpmStatsService } from '../../../shared/npm-stats/npm-stats.service';
-import { NpmStatsService as NpmStatsServiceMock } from '../../../shared/npm-stats/__mocks__/npm-stats.service';
 jest.mock('../../../shared/npm-stats/npm-stats.service');
-
-import { NEVER, of } from 'rxjs';
+import { NpmStatsService as NpmStatsServiceMock } from '../../../shared/npm-stats/__mocks__/npm-stats.service';
 
 import * as Messages from './common/messages.template';
-import { INMPStats } from 'src/shared/npm-stats/shared/api-npm.model';
 jest.mock('./common/messages.template');
+import { INMPStats } from '../../../shared/npm-stats/shared/api-npm.model';
 
 describe('Start', () => {
-  let command: StatsCommand;
+  let feature: StatsFeature;
 
-  // Telegram bot instance
-  let bot;
+  let botService: BotService;
   let npmStatsService: NpmStatsService;
   let usersService: UsersService;
+  // Telegram bot instance
+  let bot;
 
   beforeEach(() => {
     // Clear all instances and calls to constructor and all methods:
@@ -40,20 +43,24 @@ describe('Start', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
+        StatsFeature,
+
+        BotService,
         NpmStatsService,
         UsersService,
       ],
     }).compile();
 
+    botService = module.get<BotService>(BotService);
     npmStatsService = module.get<NpmStatsService>(NpmStatsService);
     usersService = module.get<UsersService>(UsersService);
 
-    bot = new TelegramBot('randomToken');
-    command = new StatsCommand(bot, npmStatsService, usersService);
+    bot = botService.bot;
+    feature = module.get<StatsFeature>(StatsFeature);
   });
 
   it('should be defined', () => {
-    expect(command).toBeDefined();
+    expect(feature).toBeDefined();
   });
 
   describe('Command', () => {
@@ -74,7 +81,7 @@ describe('Start', () => {
       // Do not trigger anything
       spyOn(usersService, 'getUser').and.returnValue(NEVER);
 
-      (command as unknown as BaseCommandMock).triggerCommand(messageReceived);
+      (feature as unknown as BaseCommandMock).triggerCommand(messageReceived);
 
       expect(sendMessageHTML).toHaveBeenCalledWith(
         bot,
@@ -101,7 +108,7 @@ describe('Start', () => {
         spyOn(usersService, 'getUser').and.returnValue(of(userFound));
         getStatsForYesterdaySpy = spyOn(npmStatsService, 'getStatsForYesterday').and.callThrough();
 
-        (command as unknown as BaseCommandMock).triggerCommand(messageReceived);
+        (feature as unknown as BaseCommandMock).triggerCommand(messageReceived);
       });
 
       it('should get the stats for every package', () => {
@@ -136,8 +143,6 @@ describe('Start', () => {
           });
         });
       });
-
     });
-
   });
 });

@@ -1,13 +1,18 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
+import { of } from 'rxjs';
+
 import * as TelegramBot from 'node-telegram-bot-api';
 
-import { AddCommand } from './add.command';
-import { UsersService } from '../../../users/service/users.service';
-jest.mock('../../../users/service/users.service');
 import { NpmStatsService } from '../../../shared/npm-stats/npm-stats.service';
-import { NpmStatsService as NpmStatsServiceMock } from '../../../shared/npm-stats/__mocks__/npm-stats.service';
 jest.mock('../../../shared/npm-stats/npm-stats.service');
+import { NpmStatsService as NpmStatsServiceMock } from '../../../shared/npm-stats/__mocks__/npm-stats.service';
+import { UsersService } from '../../../shared/users/service/users.service';
+jest.mock('../../../shared/users/service/users.service');
+import { BotService } from '../../shared/bot/bot.service';
+jest.mock('../../shared/bot/bot.service');
+
+import { AddFeature } from './add.feature';
 
 import { BaseCommand as BaseCommandMock } from '../__mocks__/base.command';
 import { BaseCommand } from '../base.command';
@@ -16,33 +21,37 @@ jest.mock('../base.command');
 import { sendMessageHTML } from '../../common';
 jest.mock('../../common/utils/utils');
 import { Template } from './common';
-import { of } from 'rxjs';
 
-describe('Add', () => {
-  let command: AddCommand;
+describe('AddFeature', () => {
+  let feature: AddFeature;
 
-  // Telegram bot instance
-  let bot;
+  let botService: BotService;
   let npmStatsService: NpmStatsService;
   let usersService: UsersService;
+  // Telegram bot instance
+  let bot;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
+        AddFeature,
+
+        BotService,
         NpmStatsService,
         UsersService,
       ],
     }).compile();
 
+    botService = module.get<BotService>(BotService);
     npmStatsService = module.get<NpmStatsService>(NpmStatsService);
     usersService = module.get<UsersService>(UsersService);
 
-    bot = new TelegramBot('randomToken');
-    command = new AddCommand(bot, npmStatsService, usersService);
+    bot = botService.bot;
+    feature = module.get<AddFeature>(AddFeature);
   });
 
   it('should be defined', () => {
-    expect(command).toBeDefined();
+    expect(feature).toBeDefined();
   });
 
   describe('Command', () => {
@@ -53,8 +62,8 @@ describe('Add', () => {
       } as TelegramBot.Message);
 
     it('should init base command with the right parameters', () => {
-      expect((command as unknown as BaseCommandMock).bot).toEqual(bot);
-      expect((command as unknown as BaseCommandMock).COMMAND).toEqual(AddCommand.COMMAND);
+      expect((feature as unknown as BaseCommandMock).bot).toEqual(bot);
+      expect((feature as unknown as BaseCommandMock).COMMAND).toEqual(AddFeature.COMMAND);
     });
 
     describe('PackageSlug Parameter', () => {
@@ -62,7 +71,7 @@ describe('Add', () => {
         const slug = 'angular';
         const msg = buildMessageReceived(`     ${slug}`);
 
-        (command as unknown as BaseCommandMock).triggerCommand(msg);
+        (feature as unknown as BaseCommandMock).triggerCommand(msg);
 
         expect((npmStatsService as unknown as NpmStatsServiceMock).slugToValidate).toEqual([slug]);
       });
@@ -70,7 +79,7 @@ describe('Add', () => {
       it('should indicate that the command is malformed', () => {
         const msg = buildMessageReceived('');
 
-        (command as unknown as BaseCommandMock).triggerCommand(msg);
+        (feature as unknown as BaseCommandMock).triggerCommand(msg);
 
         expect(sendMessageHTML).toHaveBeenCalledWith(
           bot,
@@ -89,7 +98,7 @@ describe('Add', () => {
         slug = 'angular';
         msg = buildMessageReceived(slug);
 
-        (command as unknown as BaseCommandMock).triggerCommand(msg);
+        (feature as unknown as BaseCommandMock).triggerCommand(msg);
       });
 
       describe('Valid Package', () => {

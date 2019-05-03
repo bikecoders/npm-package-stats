@@ -1,20 +1,25 @@
+import { Injectable } from '@nestjs/common';
+
 import * as TelegramBot from 'node-telegram-bot-api';
 
 import { BaseCommand } from '../base.command';
 
-import { UsersService } from '../../../users/service/users.service';
-import { User } from '../../../users/shared/models';
+import { BotService } from '../../../telegram-bot/shared/bot/bot.service';
+import { UsersService } from '../../../shared/users/service/users.service';
+
+import { User } from '../../../shared/users/shared/models';
 import { Template } from './common';
 import { sendMessageHTML } from '../../common';
 
-export class StartCommand extends BaseCommand {
+@Injectable()
+export class StartFeature extends BaseCommand {
   public static readonly COMMAND = /\/start/;
 
   constructor(
-    bot: TelegramBot,
+    botService: BotService,
     private userService: UsersService,
   ) {
-    super(bot, StartCommand.COMMAND);
+    super(botService.bot, StartFeature.COMMAND);
   }
 
   protected commandFunction(msg: TelegramBot.Message, match: RegExpExecArray) {

@@ -1,23 +1,29 @@
+import { Injectable } from '@nestjs/common';
+
 import * as TelegramBot from 'node-telegram-bot-api';
 
 import { BaseCommand } from '../base.command';
 
 import { map, switchMap, mergeMap } from 'rxjs/operators';
 
-import { NpmStatsService } from 'src/shared/npm-stats/npm-stats.service';
-import { UsersService } from '../../../users/service/users.service';
+import { BotService } from '../../../telegram-bot/shared/bot/bot.service';
+
+import { NpmStatsService } from '../../../shared/npm-stats/npm-stats.service';
+import { UsersService } from '../../../shared/users/service/users.service';
+
 import { sendMessageHTML } from '../../common';
 import * as Messages from './common/messages.template';
 
-export class StatsCommand extends BaseCommand {
+@Injectable()
+export class StatsFeature extends BaseCommand {
   public static readonly COMMAND = /\/stats/;
 
   constructor(
-    bot: TelegramBot,
+    private botService: BotService,
     private npmStatsService: NpmStatsService,
     private userService: UsersService,
   ) {
-    super(bot, StatsCommand.COMMAND);
+    super(botService.bot, StatsFeature.COMMAND);
   }
 
   protected commandFunction(msg: TelegramBot.Message, match: RegExpExecArray) {
