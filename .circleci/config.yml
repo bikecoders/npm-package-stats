@@ -24,7 +24,7 @@ executors:
     working_directory: *workdir
   sonar-executor:
     docker:
-      - image: finanzcheck/docker-node-java:8.1.4-alpine
+      - image: cwiggert/circleci-node-java:0.0.3
     working_directory: *workdir
 
 jobs:
