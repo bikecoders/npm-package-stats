@@ -43,4 +43,8 @@ export class UsersService {
   getUser(chatId: number): Observable<User>  {
     return this.usersRepository.getUser(chatId);
   }
+
+  getAllUsers(): Observable<User[]> {
+    return this.usersRepository.getAllUsers();
+  }
 }

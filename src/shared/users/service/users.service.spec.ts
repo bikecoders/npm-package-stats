@@ -142,4 +142,37 @@ describe('UsersService', () => {
       expect(userFound).toEqual(userGotten);
     });
   });
+
+  describe('Get All Users', () => {
+    let randomUsers: User[];
+    const nUsers = 4;
+
+    beforeEach(() => {
+      randomUsers = [];
+
+      for (let index = 0; index < nUsers; index++) {
+        const newUser = new User(index);
+        randomUsers.push(newUser);
+      }
+
+      // Spies
+      spyOn(userRepo, 'getAllUsers').and
+        .returnValue(of(randomUsers));
+    });
+
+    it('should get the users using the repository', () => {
+      service.getAllUsers();
+
+      expect(userRepo.getAllUsers).toHaveBeenCalled();
+    });
+
+    it('should return the user gotten', () => {
+      let usersFound: User[];
+
+      service.getAllUsers()
+        .subscribe((uFound) => (usersFound = uFound));
+
+      expect(usersFound).toEqual(randomUsers);
+    });
+  });
 });
