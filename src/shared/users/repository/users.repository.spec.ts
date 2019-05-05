@@ -3,6 +3,7 @@ import { UsersRepository } from './users.repository';
 
 import * as Datastore from 'nedb-promises';
 import { User, IPackage } from '../shared/models';
+import { classToPlain } from 'class-transformer';
 
 describe('UsersRepository', () => {
   let repository: UsersRepository;
@@ -115,6 +116,45 @@ describe('UsersRepository', () => {
     it('should return a instance of user', () => {
       expect(userFound instanceof User).toBeTruthy();
       expect(randomUser).toEqual(userFound);
+    });
+  });
+
+  describe('Get All Users', () => {
+    let randomUsers: User[];
+    const nUsers = 4;
+
+    let usersFound: User[];
+
+    beforeEach(() => {
+      randomUsers = [];
+
+      for (let index = 0; index < nUsers; index++) {
+        const newUser = new User(index);
+        randomUsers.push(newUser);
+      }
+    });
+
+    beforeEach(() => {
+      repository.getAllUsers()
+        .subscribe((users) => (usersFound = users));
+
+      const plainRandomUsers = randomUsers
+        .map((u) => classToPlain(u));
+
+      Datastore.dbCreated.triggerAction(plainRandomUsers);
+    });
+
+    it('should try find the user given the chatID', async () => {
+      const expectedFind = {};
+
+      expect(Datastore.dbCreated.findParameter).toEqual(expectedFind);
+    });
+
+    it('should return a instance of user', () => {
+      const allInstancesOfUser = usersFound.every((u) => u instanceof User);
+
+      expect(allInstancesOfUser).toBeTruthy();
+      expect(randomUsers).toEqual(usersFound);
     });
   });
 

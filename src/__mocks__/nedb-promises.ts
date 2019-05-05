@@ -11,6 +11,8 @@ export class DataBase {
 
   findOneParameter: any;
 
+  findParameter: any;
+
   updateParameter: any;
 
   constructor() {
@@ -34,6 +36,13 @@ export class DataBase {
 
   findOne(query) {
     this.findOneParameter = query;
+    this.triggerAction$ = new Subject();
+
+    return this.triggerAction$.toPromise();
+  }
+
+  find(query) {
+    this.findParameter = query;
     this.triggerAction$ = new Subject();
 
     return this.triggerAction$.toPromise();

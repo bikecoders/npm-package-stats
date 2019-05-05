@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import * as Datastore from 'nedb-promises';
 
 import { from, Observable, of, throwError } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import { catchError, map, mergeMap, toArray } from 'rxjs/operators';
 
 import { User, IPackage } from '../shared/models';
 
@@ -56,6 +56,14 @@ export class UsersRepository {
 
     return from(queryPromise).pipe(
       map((user: User) => plainToClass(User, user)),
+    );
+  }
+
+  getAllUsers(): Observable<User[]> {
+    const queryPromise = this.db.find({});
+
+    return from(queryPromise).pipe(
+      map((users: User[]) => plainToClass(User, users)),
     );
   }
 
