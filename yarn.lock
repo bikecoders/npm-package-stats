@@ -718,10 +718,10 @@
   dependencies:
     "@types/tz-offset" "*"
 
-"@types/node-telegram-bot-api@0.30.4":
-  version "0.30.4"
-  resolved "https://registry.yarnpkg.com/@types/node-telegram-bot-api/-/node-telegram-bot-api-0.30.4.tgz#9101c57f95547f9b9b8990b905ebbb59e26f4a91"
-  integrity sha512-u/8mqhnHKsBhzWQ9Pf1ReBcUlfl+TF1+4ruI2s+9jhl833ruqLDTwPsfe1RN0ysgcN//bI85FHzLNJfuGFGxHg==
+"@types/node-telegram-bot-api@0.31.0":
+  version "0.31.0"
+  resolved "https://registry.yarnpkg.com/@types/node-telegram-bot-api/-/node-telegram-bot-api-0.31.0.tgz#ac7601328711ec153198e310c9eb997c5469ffd7"
+  integrity sha512-tU+iVL1iP4N/e8+s2cw8jiWKDiZyDvIUa8QkMpu5v9RjSQ+PtDe/pqqWiZn87HGTFD5CdLxOBdC2uSclbaJ/Og==
   dependencies:
     "@types/node" "*"
     "@types/request" "*"
