@@ -6,7 +6,7 @@ import * as cron from 'node-cron';
 
 @Injectable()
 export class CronService {
-  // UTC 10 min passed midnight
+  // UTC 2pm hour
   public readonly cronExpression = '0 0 14 * * *';
 
   get cronAnnouncer(): Observable<void> {

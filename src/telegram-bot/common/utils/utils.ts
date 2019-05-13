@@ -1,5 +1,6 @@
 import * as TelegramBot from 'node-telegram-bot-api';
-import { Observable, from } from 'rxjs';
+
+import { Subject } from 'rxjs';
 
 /**
  * Send a message or a reply to a conversation
@@ -15,11 +16,24 @@ export function sendMessageHTML(
   chatId: number,
   message: string,
   replyToMessageId?: number,
-): Observable<TelegramBot.Message> {
-  const msjPromise = bot.sendMessage(chatId, message, {
+) {
+  const sub = new Subject<TelegramBot.Message>();
+
+  bot.sendMessage(chatId, message, {
     parse_mode: 'HTML',
     reply_to_message_id: replyToMessageId,
+  })
+  .then((msg) => {
+    sub.next(msg);
+    sub.complete();
+  })
+  .catch((err) => {
+    if (err.response.body.error_code !== 403) {
+      sub.error(err);
+    }
+
+    sub.complete();
   });
 
-  return from(msjPromise);
+  return sub.asObservable();
 }
