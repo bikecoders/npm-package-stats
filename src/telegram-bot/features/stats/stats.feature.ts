@@ -27,5 +27,11 @@ export class StatsFeature extends BaseCommand {
     const chatId = msg.chat.id;
 
     sendStatsMsg(this.bot, chatId, this.npmStatsService, this.userService);
+
+    this.bot.on('callback_query', (query) => {
+      console.log('-------------------------------');
+      console.log('stats', query);
+      console.log('-------------------------------');
+    });
   }
 }

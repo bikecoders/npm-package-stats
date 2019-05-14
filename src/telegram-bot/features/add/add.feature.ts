@@ -34,14 +34,14 @@ export class AddFeature extends BaseCommand {
           if (isAValidPackage) {
             this.userService.addPackage(chatId, packageSlug)
               .subscribe((_) => {
-                sendMessageHTML(this.bot, chatId, Template.success(packageSlug), msg.message_id);
+                sendMessageHTML(this.bot, chatId, Template.success(packageSlug), {}, msg.message_id);
               });
           } else {
-            sendMessageHTML(this.bot, chatId, Template.packageNotFound(packageSlug), msg.message_id);
+            sendMessageHTML(this.bot, chatId, Template.packageNotFound(packageSlug), {}, msg.message_id);
           }
         });
     } else {
-      sendMessageHTML(this.bot, chatId, Template.wrongCommand, msg.message_id);
+      sendMessageHTML(this.bot, chatId, Template.wrongCommand, {}, msg.message_id);
     }
   }
 }
