@@ -30,7 +30,7 @@
     "@nestjs/core": "6.2.0",
     "@nestjs/platform-express": "6.2.0",
     "api-npm": "1.0.0",
-    "class-transformer": "0.2.2",
+    "class-transformer": "0.2.3",
     "nedb": "1.8.0",
     "nedb-promises": "3.0.3",
     "node-cron": "2.0.3",
