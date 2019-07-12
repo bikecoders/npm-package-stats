@@ -684,10 +684,10 @@
   resolved "https://registry.yarnpkg.com/@types/mime/-/mime-2.0.0.tgz#5a7306e367c539b9f6543499de8dd519fac37a8b"
   integrity sha512-A2TAGbTFdBw9azHbpVd+/FkdW2T6msN1uct1O9bH3vTerEHKZhTXJUQXy+hNq1B0RagfU8U+KBdqiZpxjhOUQA==
 
-"@types/nedb@1.8.7":
-  version "1.8.7"
-  resolved "https://registry.yarnpkg.com/@types/nedb/-/nedb-1.8.7.tgz#3b5131e240671bdec8648ce1e925f2ab7c1647e7"
-  integrity sha512-9YAo9VTD+AFj2/yar+T9+/u/t+pn9CtuXnIYcGADwbknWyymuIO4WXOY8boYYNO7bk4DIbDBpIMfHED3pUpkJA==
+"@types/nedb@1.8.8":
+  version "1.8.8"
+  resolved "https://registry.yarnpkg.com/@types/nedb/-/nedb-1.8.8.tgz#54770bf0df40185291bc0b108beb224846f5b04c"
+  integrity sha512-krZu5LWqkLVlKPlmK/LozSMCZsKrMHIDNnjCctrG61/fnuSWFV2X190ry1xR7++ZUcJSNWOKZMH+Qs75xSNLFw==
   dependencies:
     "@types/node" "*"
 
