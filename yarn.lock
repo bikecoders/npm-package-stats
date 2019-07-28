@@ -4359,10 +4359,10 @@ natural-compare@^1.4.0:
   resolved "https://registry.yarnpkg.com/natural-compare/-/natural-compare-1.4.0.tgz#4abebfeed7541f2c27acfb29bdbbd15c8d5ba4f7"
   integrity sha1-Sr6/7tdUHywnrPspvbvRXI1bpPc=
 
-nedb-promises@3.0.3:
-  version "3.0.3"
-  resolved "https://registry.yarnpkg.com/nedb-promises/-/nedb-promises-3.0.3.tgz#f253cc627d54852a6652a2fe941c1a33c1e731ba"
-  integrity sha512-Xv4rFM9PEz+I+tdJ9jhnOPsyhInnmxMzjL9NSqhIixjwp61hNMrW/Q2iud24l1cfncBdcWZOzOWQTxm9YOitTA==
+nedb-promises@3.0.7:
+  version "3.0.7"
+  resolved "https://registry.yarnpkg.com/nedb-promises/-/nedb-promises-3.0.7.tgz#8eb4af7e4952917a96f84785ab7896c95f02a94c"
+  integrity sha512-JuE/N00fyo6h5BtPRp5disL1rPA7d+ZzRMjUGTTCuacGX2czD04V6+ftKCph5VkF3c1Tamb+/Ibk/t/Cl+AUbw==
   dependencies:
     nedb "^1.8.0"
 
