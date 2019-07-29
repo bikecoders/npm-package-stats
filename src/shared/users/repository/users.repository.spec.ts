@@ -1,7 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UsersRepository } from './users.repository';
 
-import * as Datastore from 'nedb-promises';
+import * as Datastore from 'nedb';
+
 import { User, IPackage } from '../shared/models';
 import { classToPlain } from 'class-transformer';
 
@@ -24,12 +25,12 @@ describe('UsersRepository', () => {
     it('should create the database with the right options', () => {
       process.env.DATABASE_PATH = '/some/base/';
 
-      expect(Datastore.databaseOptions.filename).toContain('users.db');
-      expect(Datastore.databaseOptions.autoload).toBeTruthy();
+      expect((Datastore as any).instance.databaseOptions.filename).toContain('users.db');
+      expect((Datastore as any).instance.databaseOptions.autoload).toBeTruthy();
     });
 
     it('should ensure the right index', () => {
-      const indexRestrictions = Datastore.dbCreated.indexRestrictions;
+      const indexRestrictions = (Datastore as any).instance.indexRestrictions;
 
       expect(indexRestrictions.fieldName).toEqual('chatId');
       expect(indexRestrictions.unique).toBeTruthy();
@@ -65,7 +66,11 @@ describe('UsersRepository', () => {
           errorType,
         };
 
-        spyOn(Datastore.dbCreated, 'insert').and.returnValue(Promise.reject(error));
+        spyOn(Datastore.prototype, 'insert').and.callFake(
+          (_, callback: (e, d) => void) => {
+            callback(error, _);
+          },
+        );
 
         return error;
       };
@@ -78,7 +83,7 @@ describe('UsersRepository', () => {
         expect(userCreated.chatId).toEqual(userToCreate.chatId);
       });
 
-      it ('should throw an error when is different than \'uniqueViolated\'', async () => {
+      it('should throw an error when is different than \'uniqueViolated\'', async () => {
         const errorToThrow = mockInsertAndThrowError('runOutSpace');
         let errorThrown;
 
@@ -104,13 +109,13 @@ describe('UsersRepository', () => {
 
       repository.getUser(chatId)
         .subscribe((user) => (userFound = user));
-      Datastore.dbCreated.triggerAction(randomUser.toJson());
+      (Datastore as any).instance.triggerAction(randomUser.toJson());
     });
 
     it('should try find the user given the chatID', async () => {
       const expectedFind = { chatId };
 
-      expect(Datastore.dbCreated.findOneParameter).toEqual(expectedFind);
+      expect((Datastore as any).instance.findOneParameter).toEqual(expectedFind);
     });
 
     it('should return a instance of user', () => {
@@ -141,13 +146,13 @@ describe('UsersRepository', () => {
       const plainRandomUsers = randomUsers
         .map((u) => classToPlain(u));
 
-      Datastore.dbCreated.triggerAction(plainRandomUsers);
+      (Datastore as any).instance.triggerAction(plainRandomUsers);
     });
 
-    it('should try find the user given the chatID', async () => {
+    it('should send the right query to find all users', async () => {
       const expectedFind = {};
 
-      expect(Datastore.dbCreated.findParameter).toEqual(expectedFind);
+      expect((Datastore as any).instance.findParameter).toEqual(expectedFind);
     });
 
     it('should return a instance of user', () => {
@@ -170,7 +175,7 @@ describe('UsersRepository', () => {
 
       repository.addPackage(randomUser, packToAdd)
         .subscribe();
-      Datastore.dbCreated.triggerAction();
+      (Datastore as any).instance.triggerAction();
     });
 
     it('should try to add a package given the user', () => {
@@ -179,7 +184,7 @@ describe('UsersRepository', () => {
 
       let query: any;
       let update: any;
-      ({ query, update } = Datastore.dbCreated.updateParameter);
+      ({ query, update } = (Datastore as any).instance.updateParameter);
 
       expect(query).toEqual(expectedQuery);
       expect(update).toEqual(expectedUpdate);
