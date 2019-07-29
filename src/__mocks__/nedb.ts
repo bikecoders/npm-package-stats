@@ -1,13 +1,17 @@
 import { Subject } from 'rxjs';
 
-export class DataBase {
+class NedbMock {
+  databaseOptions: any;
+
+  static instance: NedbMock;
+
+  triggerAction$: Subject<any>;
+
   persistence: any;
 
   indexRestrictions;
 
   autocompactionInterval: number;
-
-  triggerAction$: Subject<any>;
 
   findOneParameter: any;
 
@@ -15,40 +19,50 @@ export class DataBase {
 
   updateParameter: any;
 
-  constructor() {
+  constructor(dbOptions) {
+    this.databaseOptions = dbOptions;
+
     this.persistence = {
       setAutocompactionInterval: (interval: number) => {
         this.autocompactionInterval = interval;
       },
     };
+
+    NedbMock.instance = this;
   }
 
   ensureIndex(options) {
     this.indexRestrictions = options;
   }
 
-  async insert(document) {
-    return {
+  insert<T>(document: T, callback: (err: any, res: T) => void) {
+    const newDoc = {
       ...document,
       _id: new Date().getTime(),
     };
+
+    callback(null, newDoc);
   }
 
-  findOne(query) {
+  findOne<T>(query: any, callback: (err: any, res: T) => void) {
     this.findOneParameter = query;
     this.triggerAction$ = new Subject();
 
-    return this.triggerAction$.toPromise();
+    this.triggerAction$.subscribe((res) => {
+      callback(null, res);
+    });
   }
 
-  find(query) {
+  find<T>(query: any, callback: (err: any, res: T) => void) {
     this.findParameter = query;
     this.triggerAction$ = new Subject();
 
-    return this.triggerAction$.toPromise();
+    this.triggerAction$.subscribe((res) => {
+      callback(null, res);
+    });
   }
 
-  update(query: any, update: any, options: any) {
+  update(query: any, update: any, options: any, callback: (err: any, numberOfUpdated: number, upsert: boolean) => void) {
     this.updateParameter = {
       options,
       query,
@@ -56,7 +70,9 @@ export class DataBase {
     };
     this.triggerAction$ = new Subject();
 
-    return this.triggerAction$.toPromise();
+    this.triggerAction$.subscribe((res) => {
+      callback(null, 1, false);
+    });
   }
 
   triggerAction(document: any) {
@@ -65,10 +81,4 @@ export class DataBase {
   }
 }
 
-export let databaseOptions;
-export let dbCreated: DataBase;
-
-export function create(options) {
-  databaseOptions = options;
-  return dbCreated = new DataBase();
-}
+export = NedbMock;

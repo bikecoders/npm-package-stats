@@ -1,9 +1,11 @@
 import { Injectable } from '@nestjs/common';
 
-import * as Datastore from 'nedb-promises';
+import Datastore = require('nedb');
 
-import { from, Observable, of, throwError } from 'rxjs';
-import { catchError, map, mergeMap, toArray } from 'rxjs/operators';
+import { bindCallback_1A_2R, handleDBError, bindCallback_3A_3R } from '../../../common/utils';
+
+import { Observable, bindCallback, of, throwError } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
 
 import { User, IPackage } from '../shared/models';
 
@@ -12,29 +14,34 @@ import { plainToClass } from 'class-transformer';
 
 @Injectable()
 export class UsersRepository {
-
   // Every 24h
   static readonly AUTOCOMPATION_INTERVAL = 1000 * 60 * 60 * 24;
 
   private db: Datastore;
 
   constructor() {
-    const databaseOptions = {
+    const databaseOptions: Datastore.DataStoreOptions = {
       filename: path.resolve(process.env.DATABASE_PATH + 'users.db'),
       autoload: true,
     };
 
-    this.db = Datastore.create(databaseOptions);
+    this.db = new Datastore(databaseOptions);
     this.db.ensureIndex({ fieldName: 'chatId', unique: true });
 
-    this.db.persistence.setAutocompactionInterval(UsersRepository.AUTOCOMPATION_INTERVAL);
+    this.db.persistence.setAutocompactionInterval(
+      UsersRepository.AUTOCOMPATION_INTERVAL,
+    );
   }
 
-  create(user: User): Observable<User> {
-    const insertPromise: Promise<User> = this.db.insert(user.toJson());
+  create(user: User): Observable<any> {
+    const insert = (bindCallback<any, Error, User>(
+      this.db.insert.bind(this.db),
+    ) as unknown) as bindCallback_1A_2R<any, Error, User>;
 
-    return from(insertPromise).pipe(
-      catchError<User, Observable<User>>((err) => {
+    return insert(user.toJson()).pipe(
+      map(handleDBError),
+      map((rest) => rest[0]),
+      catchError<User, Observable<User>>(err => {
         if (err.errorType === 'uniqueViolated') {
           return of(user);
         }
@@ -52,17 +59,25 @@ export class UsersRepository {
   getUser(chatId: number): Observable<User> {
     const query = { chatId } as User;
 
-    const queryPromise = this.db.findOne(query);
+    const findOne = (bindCallback<any, Error, User>(
+      this.db.findOne.bind(this.db),
+    ) as unknown) as bindCallback_1A_2R<any, Error, User>;
 
-    return from(queryPromise).pipe(
+    return findOne(query).pipe(
+      map(handleDBError),
+      map((rest) => rest[0]),
       map((user: User) => plainToClass(User, user)),
     );
   }
 
   getAllUsers(): Observable<User[]> {
-    const queryPromise = this.db.find({});
+    const findAll = (bindCallback<any, Error, User[]>(
+      this.db.find.bind(this.db),
+    ) as unknown) as bindCallback_1A_2R<any, Error, User[]>;
 
-    return from(queryPromise).pipe(
+    return findAll({}).pipe(
+      map(handleDBError),
+      map((rest) => rest[0]),
       map((users: User[]) => plainToClass(User, users)),
     );
   }
@@ -75,12 +90,16 @@ export class UsersRepository {
    */
   addPackage(user: User, pack: IPackage): Observable<any> {
     const query = { chatId: user.chatId } as User;
-    const update = {
+    const updateCondition = {
       $set: { [`packages.${pack.npmSlug}`]: pack },
     };
 
-    const updatePromise: Promise<any> = this.db.update(query, update);
+    const update = (bindCallback<any, any, Nedb.UpdateOptions, Error, number, boolean>(
+      this.db.update.bind(this.db),
+    ) as unknown) as bindCallback_3A_3R<any, any, Nedb.UpdateOptions, Error, number, boolean>;
 
-    return from(updatePromise);
+    return update(query, updateCondition, {}).pipe(
+      map(handleDBError),
+    );
   }
 }
