@@ -25,5 +25,5 @@
 ## Usage
   1. Have a [Telegram](https://telegram.org) Account
   2. Start a conversation with the bot
-  3. Add some packages using `/get your-package-slug`
+  3. Add some packages using `/add your-package-slug`
   4. Use the `/stats` command to get your stats
