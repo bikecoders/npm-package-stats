@@ -35,7 +35,7 @@
     "node-cron": "2.0.3",
     "node-telegram-bot-api": "0.30.0",
     "reflect-metadata": "0.1.13",
-    "rimraf": "2.6.3",
+    "rimraf": "2.7.1",
     "rxjs": "6.5.2"
   },
   "devDependencies": {
