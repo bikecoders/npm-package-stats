@@ -26,9 +26,9 @@
     "test:sonar-local:only-push": "sonar-scanner"
   },
   "dependencies": {
-    "@nestjs/common": "6.9.0",
-    "@nestjs/core": "6.9.0",
-    "@nestjs/platform-express": "6.9.0",
+    "@nestjs/common": "6.10.1",
+    "@nestjs/core": "6.10.1",
+    "@nestjs/platform-express": "6.10.1",
     "api-npm": "1.0.0",
     "class-transformer": "0.2.3",
     "nedb": "1.8.0",
@@ -41,8 +41,8 @@
   "devDependencies": {
     "@commitlint/cli": "8.2.0",
     "@commitlint/config-conventional": "8.2.0",
-    "@nestjs/cli": "6.11.5",
-    "@nestjs/testing": "6.9.0",
+    "@nestjs/cli": "6.12.2",
+    "@nestjs/testing": "6.10.1",
     "@types/express": "4.17.1",
     "@types/jest": "24.0.23",
     "@types/nedb": "1.8.9",
