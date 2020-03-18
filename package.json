@@ -46,7 +46,7 @@
     "@types/express": "4.17.1",
     "@types/jest": "25.1.4",
     "@types/nedb": "1.8.9",
-    "@types/node": "12.12.14",
+    "@types/node": "12.12.30",
     "@types/node-cron": "2.0.2",
     "@types/node-telegram-bot-api": "0.40.2",
     "@types/supertest": "2.0.8",
