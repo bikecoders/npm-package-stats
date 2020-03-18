@@ -2,7 +2,11 @@ import { Injectable } from '@nestjs/common';
 
 import Datastore = require('nedb');
 
-import { bindCallback_1A_2R, handleDBError, bindCallback_3A_3R } from '../../../common/utils';
+import {
+  bindCallback_1A_2R,
+  handleDBError,
+  bindCallback_3A_3R,
+} from '../../../common/utils';
 
 import { Observable, bindCallback, of, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
@@ -40,8 +44,8 @@ export class UsersRepository {
 
     return insert(user.toJson()).pipe(
       map(handleDBError),
-      map((rest) => rest[0]),
-      catchError<User, Observable<User>>(err => {
+      map(rest => rest[0]),
+      catchError(err => {
         if (err.errorType === 'uniqueViolated') {
           return of(user);
         }
@@ -65,7 +69,7 @@ export class UsersRepository {
 
     return findOne(query).pipe(
       map(handleDBError),
-      map((rest) => rest[0]),
+      map(rest => rest[0]),
       map((user: User) => plainToClass(User, user)),
     );
   }
@@ -77,7 +81,7 @@ export class UsersRepository {
 
     return findAll({}).pipe(
       map(handleDBError),
-      map((rest) => rest[0]),
+      map(rest => rest[0]),
       map((users: User[]) => plainToClass(User, users)),
     );
   }
@@ -88,18 +92,31 @@ export class UsersRepository {
    * @param user The user that adds the package
    * @param pack The package to add
    */
-  addPackage(user: User, pack: IPackage): Observable<any> {
+  addPackage(user: User, pack: IPackage) {
     const query = { chatId: user.chatId } as User;
     const updateCondition = {
       $set: { [`packages.${pack.npmSlug}`]: pack },
     };
 
-    const update = (bindCallback<any, any, Nedb.UpdateOptions, Error, number, boolean>(
-      this.db.update.bind(this.db),
-    ) as unknown) as bindCallback_3A_3R<any, any, Nedb.UpdateOptions, Error, number, boolean>;
+    const update = (bindCallback<
+      any,
+      any,
+      Nedb.UpdateOptions,
+      Error,
+      number,
+      boolean
+    >(this.db.update.bind(this.db)) as unknown) as bindCallback_3A_3R<
+      any,
+      any,
+      Nedb.UpdateOptions,
+      Error,
+      number,
+      boolean
+    >;
 
     return update(query, updateCondition, {}).pipe(
       map(handleDBError),
+      map(rest => rest[0]),
     );
   }
 }
