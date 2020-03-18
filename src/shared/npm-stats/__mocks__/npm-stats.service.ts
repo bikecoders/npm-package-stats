@@ -5,29 +5,28 @@ import { Observable, Subject } from 'rxjs';
 import { INMPStats, INMPStatsError } from '../shared/api-npm.model';
 
 export class NpmStatsService {
-
-  public requests: Array<{
-    sub: Subject<any>,
-    slug: string,
-  }> = [];
+  public requests: {
+    sub: Subject<any>;
+    slug: string;
+  }[] = [];
 
   public slugToValidate: string[] = [];
   public slugToGetStats: string[] = [];
 
-  public infoSent: Array<INMPStats | INMPStatsError> = [];
+  public infoSent: (INMPStats | INMPStatsError)[] = [];
 
   // ---------- getStatsForYesterday ----------------
   getStatsForYesterday(slug: string): Observable<INMPStats | INMPStatsError> {
     const sub = new Subject<any>();
 
-    this.requests.push({sub, slug});
+    this.requests.push({ sub, slug });
     this.slugToGetStats.push(slug);
 
     return sub.asObservable();
   }
 
   getStatsForYesterdaySuccess() {
-    this.requests.forEach((data) => {
+    this.requests.forEach(data => {
       const info = {
         downloads: 1234,
         start: '1991-08-08',
@@ -43,7 +42,7 @@ export class NpmStatsService {
   }
 
   getStatsForYesterdayError() {
-    this.requests.forEach((data) => {
+    this.requests.forEach(data => {
       const info = {
         error: 'some random error',
       } as INMPStatsError;
@@ -68,7 +67,7 @@ export class NpmStatsService {
   }
 
   validateSlugSuccess() {
-    this.requests.forEach((data) => {
+    this.requests.forEach(data => {
       data.sub.next(true);
 
       data.sub.complete();
@@ -76,12 +75,11 @@ export class NpmStatsService {
   }
 
   validateSlugFalse() {
-    this.requests.forEach((data) => {
+    this.requests.forEach(data => {
       data.sub.next(false);
 
       data.sub.complete();
     });
   }
   // ---------- validateSlug ----------------
-
 }
