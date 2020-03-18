@@ -1,10 +1,10 @@
 {
-  "extends": [
-    "config:base"
-  ],
-  "schedule": ["after 5pm on friday"],
-  "automerge": true,
-  "major": {
-    "automerge": false
-  }
+  "extends": ["config:base"],
+  "schedule": ["before 3am on the first day of the month"],
+  "packageRules": [
+    {
+      "updateTypes": ["minor", "patch"],
+      "automerge": true
+    }
+  ]
 }
