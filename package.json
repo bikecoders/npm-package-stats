@@ -51,7 +51,7 @@
     "@types/node-telegram-bot-api": "0.40.0",
     "@types/supertest": "2.0.8",
     "cross-env": "6.0.3",
-    "husky": "4.2.1",
+    "husky": "4.2.3",
     "jest": "24.9.0",
     "jest-sonar-reporter": "2.0.0",
     "nodemon": "2.0.2",
