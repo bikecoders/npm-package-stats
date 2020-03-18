@@ -25,7 +25,9 @@ describe('UsersRepository', () => {
     it('should create the database with the right options', () => {
       process.env.DATABASE_PATH = '/some/base/';
 
-      expect((Datastore as any).instance.databaseOptions.filename).toContain('users.db');
+      expect((Datastore as any).instance.databaseOptions.filename).toContain(
+        'users.db',
+      );
       expect((Datastore as any).instance.databaseOptions.autoload).toBeTruthy();
     });
 
@@ -40,7 +42,8 @@ describe('UsersRepository', () => {
   describe('Create User', () => {
     let userToCreate: User;
 
-    const createUser = (newUser: User) => repository.create(newUser).toPromise();
+    const createUser = (newUser: User) =>
+      repository.create(newUser).toPromise();
 
     beforeEach(() => {
       userToCreate = new User(12345);
@@ -67,8 +70,8 @@ describe('UsersRepository', () => {
         };
 
         spyOn(Datastore.prototype, 'insert').and.callFake(
-          (_, callback: (e, d) => void) => {
-            callback(error, _);
+          (_, callback: (e, d?) => void) => {
+            callback(error);
           },
         );
 
@@ -83,7 +86,7 @@ describe('UsersRepository', () => {
         expect(userCreated.chatId).toEqual(userToCreate.chatId);
       });
 
-      it('should throw an error when is different than \'uniqueViolated\'', async () => {
+      it('should throw an error when is different than "uniqueViolated"', async () => {
         const errorToThrow = mockInsertAndThrowError('runOutSpace');
         let errorThrown;
 
@@ -93,7 +96,7 @@ describe('UsersRepository', () => {
           errorThrown = err;
         }
 
-        expect(errorToThrow).toBe(errorThrown);
+        expect(errorThrown).toBe(errorToThrow);
       });
     });
   });
@@ -107,15 +110,16 @@ describe('UsersRepository', () => {
       chatId = 1234;
       randomUser = new User(chatId);
 
-      repository.getUser(chatId)
-        .subscribe((user) => (userFound = user));
+      repository.getUser(chatId).subscribe(user => (userFound = user));
       (Datastore as any).instance.triggerAction(randomUser.toJson());
     });
 
     it('should try find the user given the chatID', async () => {
       const expectedFind = { chatId };
 
-      expect((Datastore as any).instance.findOneParameter).toEqual(expectedFind);
+      expect((Datastore as any).instance.findOneParameter).toEqual(
+        expectedFind,
+      );
     });
 
     it('should return a instance of user', () => {
@@ -140,11 +144,9 @@ describe('UsersRepository', () => {
     });
 
     beforeEach(() => {
-      repository.getAllUsers()
-        .subscribe((users) => (usersFound = users));
+      repository.getAllUsers().subscribe(users => (usersFound = users));
 
-      const plainRandomUsers = randomUsers
-        .map((u) => classToPlain(u));
+      const plainRandomUsers = randomUsers.map(u => classToPlain(u));
 
       (Datastore as any).instance.triggerAction(plainRandomUsers);
     });
@@ -156,7 +158,7 @@ describe('UsersRepository', () => {
     });
 
     it('should return a instance of user', () => {
-      const allInstancesOfUser = usersFound.every((u) => u instanceof User);
+      const allInstancesOfUser = usersFound.every(u => u instanceof User);
 
       expect(allInstancesOfUser).toBeTruthy();
       expect(randomUsers).toEqual(usersFound);
@@ -173,14 +175,15 @@ describe('UsersRepository', () => {
       packToAdd = { npmSlug: 'angular' };
       randomUser = new User(chatId);
 
-      repository.addPackage(randomUser, packToAdd)
-        .subscribe();
+      repository.addPackage(randomUser, packToAdd).subscribe();
       (Datastore as any).instance.triggerAction();
     });
 
     it('should try to add a package given the user', () => {
       const expectedQuery = { chatId };
-      const expectedUpdate = { $set: { [`packages.${packToAdd.npmSlug}`]: packToAdd } };
+      const expectedUpdate = {
+        $set: { [`packages.${packToAdd.npmSlug}`]: packToAdd },
+      };
 
       let query: any;
       let update: any;

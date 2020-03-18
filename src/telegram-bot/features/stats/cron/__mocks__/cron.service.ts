@@ -1,5 +1,3 @@
-import { Injectable } from '@nestjs/common';
-
 import { Subject, Observable } from 'rxjs';
 
 import cronMock = require('../../../../../__mocks__/node-cron');

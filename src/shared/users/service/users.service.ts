@@ -8,8 +8,7 @@ import { UsersRepository } from '../repository/users.repository';
 
 @Injectable()
 export class UsersService {
-
-  constructor(private usersRepository: UsersRepository) { }
+  constructor(private usersRepository: UsersRepository) {}
 
   create(user: User): Observable<User> {
     return this.usersRepository.create(user);
@@ -32,6 +31,7 @@ export class UsersService {
 
           return this.usersRepository.addPackage(user, pack).pipe(
             tap(() => user.addPackage(pack)),
+            map(() => user),
           );
         } else {
           return of(user);
@@ -40,7 +40,7 @@ export class UsersService {
     );
   }
 
-  getUser(chatId: number): Observable<User>  {
+  getUser(chatId: number): Observable<User> {
     return this.usersRepository.getUser(chatId);
   }
 
