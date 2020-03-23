@@ -35,9 +35,9 @@ jobs:
       # Download and cache dependencies
       - restore_cache:
           keys:
-          - *cache_key
-          # fallback to using the latest cache if no exact match is found
-          - v1-dependencies-
+            - *cache_key
+            # fallback to using the latest cache if no exact match is found
+            - v1-dependencies-
       - run: yarn install
       - save_cache:
           paths:
@@ -90,7 +90,7 @@ jobs:
     executor: sonar-executor
     steps:
       - attach_workspace:
-          at: /home/circleci/repo
+          at: *workdir
       # Create extra env Variables
       - run: cat ./.circleci/scripts/extra-variables.sh >> $BASH_ENV
       # Fix CircleCI repo references
@@ -101,14 +101,14 @@ jobs:
     executor: sonar-executor
     steps:
       - attach_workspace:
-          at: /home/circleci/repo
+          at: *workdir
       - run: ./node_modules/sonar-scanner/bin/sonar-scanner -Dsonar.organization=bikecoders -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=$SONARCLOUD_TOKEN
 
   deploy:
     executor: my-executor
     steps:
       - attach_workspace:
-          at: /home/circleci/repo
+          at: *workdir
       - add_ssh_keys
       - run: echo "$know_host_server_value" >> ~/.ssh/known_hosts
       - run: .circleci/deployment/deploy.sh

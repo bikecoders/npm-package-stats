@@ -15,17 +15,14 @@ fs.readFile(envDevExampleFilePath, (err, data) => {
 
   const dataStr = data.toString();
 
-  const envVariables = dataStr
-    .split('\n')
-    .map((line) => line.split('=')[0]);
+  const envVariables = dataStr.split('\n').map(line => line.split('=')[0]);
 
   // The content of the new file
-  const newEnvProdFile = envVariables
-    .map((envVar) => generateEnvVar(envVar))
-    .join('\n');
+  const newEnvProdFile =
+    envVariables.map(envVar => generateEnvVar(envVar)).join('\n') + '\n';
 
   // Write the new file
-  fs.writeFile(envProdFilePath, newEnvProdFile, (err) => {
+  fs.writeFile(envProdFilePath, newEnvProdFile, err => {
     if (err) throw err;
 
     console.log('Env Production file created successfully');
