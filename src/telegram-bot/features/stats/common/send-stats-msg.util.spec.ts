@@ -33,8 +33,8 @@ describe('Send Message', () => {
 
   beforeEach(() => {
     // Clear all instances and calls to constructor and all methods:
-    (UsersService as unknown as jest.SpyInstance).mockClear();
-    (sendMessageHTML as unknown as jest.SpyInstance).mockClear();
+    ((UsersService as unknown) as jest.SpyInstance).mockClear();
+    ((sendMessageHTML as unknown) as jest.SpyInstance).mockClear();
   });
 
   beforeEach(() => {
@@ -43,7 +43,7 @@ describe('Send Message', () => {
     const plainUser = {
       chatId,
       packages: {
-        'angular': { npmSlug: 'angular' },
+        angular: { npmSlug: 'angular' },
         'ngx-sticky-directive': { npmSlug: 'ngx-sticky-directive' },
       },
     };
@@ -52,10 +52,7 @@ describe('Send Message', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        NpmStatsService,
-        UsersService,
-      ],
+      providers: [NpmStatsService, UsersService],
     }).compile();
 
     npmStatsService = module.get<NpmStatsService>(NpmStatsService);
@@ -63,7 +60,10 @@ describe('Send Message', () => {
 
     bot = new TelegramBot('randomToken');
 
-    getStatsForYesterdaySpy = spyOn(npmStatsService, 'getStatsForYesterday').and.callThrough();
+    getStatsForYesterdaySpy = spyOn(
+      npmStatsService,
+      'getStatsForYesterday',
+    ).and.callThrough();
   });
 
   describe('Stats Sending', () => {
@@ -72,7 +72,11 @@ describe('Send Message', () => {
     });
 
     it('should send the disclaimer', () => {
-      expect(sendMessageHTML).toHaveBeenCalledWith(bot, user.chatId, Template.disclaimer);
+      expect(sendMessageHTML).toHaveBeenCalledWith(
+        bot,
+        user.chatId,
+        Template.disclaimer,
+      );
     });
 
     describe('Get Stats', () => {
@@ -83,7 +87,7 @@ describe('Send Message', () => {
 
     describe('Send Message', () => {
       beforeEach(() => {
-        (npmStatsService as unknown as NpmStatsServiceMock).getStatsForYesterdaySuccess();
+        ((npmStatsService as unknown) as NpmStatsServiceMock).getStatsForYesterdaySuccess();
       });
 
       it('should send the message for every package', () => {
@@ -99,9 +103,10 @@ describe('Send Message', () => {
       });
 
       it('should send the right message', () => {
-        (npmStatsService as unknown as NpmStatsServiceMock).getStatsForYesterdaySuccess();
+        ((npmStatsService as unknown) as NpmStatsServiceMock).getStatsForYesterdaySuccess();
 
-        const infoSent = (npmStatsService as unknown as NpmStatsServiceMock).infoSent;
+        const infoSent = ((npmStatsService as unknown) as NpmStatsServiceMock)
+          .infoSent;
 
         infoSent.forEach(({ downloads, end, start }: INMPStats) => {
           expect(Template.stat).toHaveBeenLastCalledWith({

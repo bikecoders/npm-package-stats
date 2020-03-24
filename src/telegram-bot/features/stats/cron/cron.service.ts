@@ -20,7 +20,9 @@ export class CronService {
   constructor() {
     this.cronAnnouncer$ = new Subject();
 
-    this.cron = cron.schedule(this.cronExpression, () => this.cronAnnouncer$.next());
+    this.cron = cron.schedule(this.cronExpression, () =>
+      this.cronAnnouncer$.next(),
+    );
     this.cron.start();
   }
 }

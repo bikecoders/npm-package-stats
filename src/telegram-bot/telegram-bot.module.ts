@@ -4,10 +4,7 @@ import { FeaturesModule } from './features/features.module';
 import { SharedModule } from '../shared/shared.module';
 
 @Module({
-  imports: [
-    FeaturesModule,
-    SharedModule,
-  ],
+  imports: [FeaturesModule, SharedModule],
   controllers: [TelegramBotController],
 })
 export class TelegramBotModule {}

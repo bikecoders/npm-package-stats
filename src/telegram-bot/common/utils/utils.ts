@@ -19,21 +19,22 @@ export function sendMessageHTML(
 ) {
   const sub = new Subject<TelegramBot.Message>();
 
-  bot.sendMessage(chatId, message, {
-    parse_mode: 'HTML',
-    reply_to_message_id: replyToMessageId,
-  })
-  .then((msg) => {
-    sub.next(msg);
-    sub.complete();
-  })
-  .catch((err) => {
-    if (err.response.body.error_code !== 403) {
-      sub.error(err);
-    }
+  bot
+    .sendMessage(chatId, message, {
+      parse_mode: 'HTML',
+      reply_to_message_id: replyToMessageId,
+    })
+    .then(msg => {
+      sub.next(msg);
+      sub.complete();
+    })
+    .catch(err => {
+      if (err.response.body.error_code !== 403) {
+        sub.error(err);
+      }
 
-    sub.complete();
-  });
+      sub.complete();
+    });
 
   return sub.asObservable();
 }

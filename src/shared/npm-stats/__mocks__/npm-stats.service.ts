@@ -1,5 +1,3 @@
-import npmAPI = require('api-npm');
-
 import { Observable, Subject } from 'rxjs';
 
 import { INMPStats, INMPStatsError } from '../shared/api-npm.model';

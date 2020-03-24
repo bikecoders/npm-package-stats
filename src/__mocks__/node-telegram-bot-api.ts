@@ -34,7 +34,10 @@ class TelegramBot {
     this.onTextsValue[regex.toString()] = callback;
   }
 
-  sendMessage(chatId: number, message: string, options): Promise<TelegramBotReal.Message> {
+  sendMessage(
+    chatId: number,
+    message: string,
+  ): Promise<TelegramBotReal.Message> {
     const messageProm$ = new Subject<TelegramBotReal.Message>();
 
     this.messageQueue.push({
@@ -68,7 +71,9 @@ class TelegramBot {
   triggerMessageSentErrorAny(errCode?: number) {
     const msgQueued = this.messageQueue.pop();
 
-    msgQueued.indicator$.error(this.errorConstructor(errCode ? errCode : 12345));
+    msgQueued.indicator$.error(
+      this.errorConstructor(errCode ? errCode : 12345),
+    );
     msgQueued.indicator$.complete();
   }
 

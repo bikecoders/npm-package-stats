@@ -20,8 +20,7 @@ export class User {
    * @returns IPackage[].
    */
   get packagesIterative(): IPackage[] {
-    return Object.keys(this.packages)
-      .map((key) => this.packages[key]);
+    return Object.keys(this.packages).map(key => this.packages[key]);
   }
 
   /**

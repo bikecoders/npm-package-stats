@@ -8,11 +8,7 @@ export abstract class BaseCommand {
     return this.commandFunction;
   }
 
-  constructor(
-    public bot: TelegramBot,
-    public readonly COMMAND: RegExp,
-  ) {
-  }
+  constructor(public bot: TelegramBot, public readonly COMMAND: RegExp) {}
 
   triggerCommand(msg: TelegramBot.Message, match: RegExpExecArray = null) {
     this.commandFunction(msg, match);
@@ -21,5 +17,8 @@ export abstract class BaseCommand {
   /**
    * Define in this method what the command is going to do
    */
-  protected abstract commandFunction(msg: TelegramBot.Message, match: RegExpExecArray);
+  protected abstract commandFunction(
+    msg: TelegramBot.Message,
+    match: RegExpExecArray,
+  );
 }

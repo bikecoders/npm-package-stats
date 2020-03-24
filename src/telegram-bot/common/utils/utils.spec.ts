@@ -76,11 +76,11 @@ describe('Utils', () => {
         expect(sent$ instanceof Observable).toBeTruthy();
       });
 
-      it('should return the msg sent', (done) => {
+      it('should return the msg sent', done => {
         let messageSent: TelegramBot.Message;
 
         sent$.subscribe({
-          next: (msg) => {
+          next: msg => {
             messageSent = msg;
 
             expect(messageSent).not.toEqual(message);
@@ -106,7 +106,7 @@ describe('Utils', () => {
 
         beforeEach(async () => {
           triggered = false;
-          subscription = sent$.subscribe(() => triggered = true);
+          subscription = sent$.subscribe(() => (triggered = true));
 
           bot.triggerMessageSentError403();
 
@@ -127,26 +127,20 @@ describe('Utils', () => {
         let triggered: boolean;
         let errorTriggered: boolean;
 
-        let subscription: Subscription;
-
         beforeEach(async () => {
           triggered = false;
           errorTriggered = false;
 
-          subscription = sent$.pipe(
-            catchError((err) => {
-              errorTriggered = true;
-              return NEVER;
-            }),
-          )
-            .subscribe(() => triggered = true);
+          sent$
+            .pipe(
+              catchError(() => {
+                errorTriggered = true;
+                return NEVER;
+              }),
+            )
+            .subscribe(() => (triggered = true));
 
           bot.triggerMessageSentErrorAny();
-
-          // Wait for completion or emit, need the catch, if it's not there
-          // the test is going to explode, the error is riced
-          // tslint:disable-next-line: no-empty
-          await sent$.toPromise().catch(() => { });
         });
 
         it('should not trigger any value on next', () => {

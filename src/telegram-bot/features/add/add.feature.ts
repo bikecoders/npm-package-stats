@@ -22,22 +22,32 @@ export class AddFeature extends BaseCommand {
     super(botService.bot, AddFeature.COMMAND);
   }
 
-  protected commandFunction(msg: TelegramBot.Message, match: RegExpExecArray) {
+  protected commandFunction(msg: TelegramBot.Message) {
     const chatId = msg.chat.id;
     // Remove multiple spaces just for one
     const msgWithoutSpaces = msg.text.replace(/\s+/g, ' ').trim();
     const packageSlug = msgWithoutSpaces.split(' ')[1] || '';
 
     if (!!packageSlug) {
-      this.npmStatsService.validateSlug(packageSlug)
-        .subscribe((isAValidPackage) => {
+      this.npmStatsService
+        .validateSlug(packageSlug)
+        .subscribe(isAValidPackage => {
           if (isAValidPackage) {
-            this.userService.addPackage(chatId, packageSlug)
-              .subscribe((_) => {
-                sendMessageHTML(this.bot, chatId, Template.success(packageSlug), msg.message_id);
-              });
+            this.userService.addPackage(chatId, packageSlug).subscribe(() => {
+              sendMessageHTML(
+                this.bot,
+                chatId,
+                Template.success(packageSlug),
+                msg.message_id,
+              );
+            });
           } else {
-            sendMessageHTML(this.bot, chatId, Template.packageNotFound(packageSlug), msg.message_id);
+            sendMessageHTML(
+              this.bot,
+              chatId,
+              Template.packageNotFound(packageSlug),
+              msg.message_id,
+            );
           }
         });
     } else {

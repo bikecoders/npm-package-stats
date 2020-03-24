@@ -18,7 +18,7 @@ describe('AppController', () => {
     it('should return "Hello World!"', () => {
       expect(appController.healthCheck()).toEqual({
         status: true,
-        message: 'I\'m ok, thank you',
+        message: "I'm ok, thank you",
       });
     });
   });

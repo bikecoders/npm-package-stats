@@ -7,10 +7,7 @@ import { SharedModule } from '../../../shared/shared.module';
 import { StatsFeature } from './stats.feature';
 
 @Module({
-  imports: [
-    BotSharedModule,
-    SharedModule,
-  ],
+  imports: [BotSharedModule, SharedModule],
   providers: [StatsFeature, CronService, SendStatsService],
 })
 export class StatsModule {}

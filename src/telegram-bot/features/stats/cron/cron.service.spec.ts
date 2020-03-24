@@ -1,7 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { CronService } from './cron.service';
 
-import * as cron from 'node-cron';
 import cronMock = require('../../../../__mocks__/node-cron');
 
 describe('CronService', () => {

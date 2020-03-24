@@ -10,9 +10,7 @@ jest.mock('../../common/utils/utils');
 
 import { StartFeature } from './start.feature';
 
-import { NpmStatsService } from '../../../shared/npm-stats/npm-stats.service';
 jest.mock('../../../shared/npm-stats/npm-stats.service');
-import { NpmStatsService as NpmStatsServiceMock } from '../../../shared/npm-stats/__mocks__/npm-stats.service';
 import { UsersService } from '../../../shared/users/service/users.service';
 jest.mock('../../../shared/users/service/users.service');
 import { BotService } from '../../shared/bot/bot.service';
@@ -20,7 +18,6 @@ jest.mock('../../shared/bot/bot.service');
 import { User } from '../../../shared/users/shared/models/user.model';
 
 import { BaseCommand as BaseCommandMock } from '../__mocks__/base.command';
-import { BaseCommand } from '../base.command';
 jest.mock('../base.command');
 
 describe('Start', () => {
@@ -33,12 +30,7 @@ describe('Start', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        StartFeature,
-
-        BotService,
-        UsersService,
-      ],
+      providers: [StartFeature, BotService, UsersService],
     }).compile();
 
     botService = module.get<BotService>(BotService);
@@ -66,14 +58,16 @@ describe('Start', () => {
     });
 
     it('should init base command with the right parameters', () => {
-      expect((feature as unknown as BaseCommandMock).bot).toEqual(bot);
-      expect((feature as unknown as BaseCommandMock).COMMAND).toEqual(StartFeature.COMMAND);
+      expect(((feature as unknown) as BaseCommandMock).bot).toEqual(bot);
+      expect(((feature as unknown) as BaseCommandMock).COMMAND).toEqual(
+        StartFeature.COMMAND,
+      );
     });
 
     it('should try create the user', () => {
       const createSpy = spyOn(usersService, 'create').and.returnValue(NEVER);
 
-      (feature as unknown as BaseCommandMock).triggerCommand(messageReceived);
+      ((feature as unknown) as BaseCommandMock).triggerCommand(messageReceived);
 
       expect(createSpy).toHaveBeenCalledWith(new User(newUserId));
     });
@@ -81,7 +75,7 @@ describe('Start', () => {
     it('should send the welcome message', () => {
       spyOn(usersService, 'create').and.returnValue(of({}));
 
-      (feature as unknown as BaseCommandMock).triggerCommand(messageReceived);
+      ((feature as unknown) as BaseCommandMock).triggerCommand(messageReceived);
 
       expect(sendMessageHTML).toHaveBeenCalledWith(
         bot,

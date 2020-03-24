@@ -48,7 +48,7 @@ class NedbMock {
     this.findOneParameter = query;
     this.triggerAction$ = new Subject();
 
-    this.triggerAction$.subscribe((res) => {
+    this.triggerAction$.subscribe(res => {
       callback(null, res);
     });
   }
@@ -57,12 +57,17 @@ class NedbMock {
     this.findParameter = query;
     this.triggerAction$ = new Subject();
 
-    this.triggerAction$.subscribe((res) => {
+    this.triggerAction$.subscribe(res => {
       callback(null, res);
     });
   }
 
-  update(query: any, update: any, options: any, callback: (err: any, numberOfUpdated: number, upsert: boolean) => void) {
+  update(
+    query: any,
+    update: any,
+    options: any,
+    callback: (err: any, numberOfUpdated: number, upsert: boolean) => void,
+  ) {
     this.updateParameter = {
       options,
       query,
@@ -70,7 +75,7 @@ class NedbMock {
     };
     this.triggerAction$ = new Subject();
 
-    this.triggerAction$.subscribe((res) => {
+    this.triggerAction$.subscribe(() => {
       callback(null, 1, false);
     });
   }

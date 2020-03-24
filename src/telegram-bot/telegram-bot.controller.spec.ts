@@ -6,9 +6,7 @@ describe('TelegramBotController', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      controllers: [
-        TelegramBotController,
-      ],
+      controllers: [TelegramBotController],
     }).compile();
 
     controller = module.get<TelegramBotController>(TelegramBotController);

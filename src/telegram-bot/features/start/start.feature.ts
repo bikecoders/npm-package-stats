@@ -15,21 +15,17 @@ import { sendMessageHTML } from '../../common';
 export class StartFeature extends BaseCommand {
   public static readonly COMMAND = /\/start/;
 
-  constructor(
-    botService: BotService,
-    private userService: UsersService,
-  ) {
+  constructor(botService: BotService, private userService: UsersService) {
     super(botService.bot, StartFeature.COMMAND);
   }
 
-  protected commandFunction(msg: TelegramBot.Message, match: RegExpExecArray) {
+  protected commandFunction(msg: TelegramBot.Message) {
     const chatId = msg.chat.id;
     const user: User = new User(chatId);
 
     // TODO catch any error
-    this.userService.create(user)
-      .subscribe(_ => {
-        sendMessageHTML(this.bot, chatId, Template.welcome);
-      });
+    this.userService.create(user).subscribe(() => {
+      sendMessageHTML(this.bot, chatId, Template.welcome);
+    });
   }
 }

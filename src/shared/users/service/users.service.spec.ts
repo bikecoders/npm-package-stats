@@ -24,15 +24,12 @@ describe('UsersService', () => {
 
   beforeEach(() => {
     // Clear all instances and calls to constructor and all methods:
-    (UsersRepository as unknown as jest.SpyInstance).mockClear();
+    ((UsersRepository as unknown) as jest.SpyInstance).mockClear();
   });
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        UsersService,
-        UsersRepository,
-      ],
+      providers: [UsersService, UsersRepository],
     }).compile();
 
     service = module.get<UsersService>(UsersService);
@@ -59,14 +56,12 @@ describe('UsersService', () => {
     let hasPackageSpy: jasmine.Spy;
 
     const addPackage = (chatId: number, packageSlug: string) => {
-      service.addPackage(chatId, packageSlug)
-        .subscribe();
+      service.addPackage(chatId, packageSlug).subscribe();
     };
 
     beforeEach(() => {
       // Spies
-      getUserSpy = spyOn(service, 'getUser').and
-        .returnValue(of(userFound));
+      getUserSpy = spyOn(service, 'getUser').and.returnValue(of(userFound));
 
       hasPackageSpy = spyOn(userFound, 'hasPackage').and.callThrough();
     });
@@ -123,8 +118,7 @@ describe('UsersService', () => {
       chatId = 1234;
 
       // Spies
-      spyOn(userRepo, 'getUser').and
-        .returnValue(of(userFound));
+      spyOn(userRepo, 'getUser').and.returnValue(of(userFound));
     });
 
     it('should get the user using the repository', () => {
@@ -136,8 +130,7 @@ describe('UsersService', () => {
     it('should return the user gotten', () => {
       let userGotten: User;
 
-      service.getUser(chatId)
-        .subscribe((uFound) => (userGotten = uFound));
+      service.getUser(chatId).subscribe(uFound => (userGotten = uFound));
 
       expect(userFound).toEqual(userGotten);
     });
@@ -156,8 +149,7 @@ describe('UsersService', () => {
       }
 
       // Spies
-      spyOn(userRepo, 'getAllUsers').and
-        .returnValue(of(randomUsers));
+      spyOn(userRepo, 'getAllUsers').and.returnValue(of(randomUsers));
     });
 
     it('should get the users using the repository', () => {
@@ -169,8 +161,7 @@ describe('UsersService', () => {
     it('should return the user gotten', () => {
       let usersFound: User[];
 
-      service.getAllUsers()
-        .subscribe((uFound) => (usersFound = uFound));
+      service.getAllUsers().subscribe(uFound => (usersFound = uFound));
 
       expect(usersFound).toEqual(randomUsers);
     });

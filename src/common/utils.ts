@@ -4,10 +4,10 @@ import { isArray } from 'util';
 export const buildNPMLink = (slug: string) =>
   `https://www.npmjs.com/package/${slug}`;
 
-export type bindCallback_1A_2R<A1, R1, R2> = (
+export type bindCallback1A2R<A1, R1, R2> = (
   a1: A1,
 ) => Observable<[null, R2] | R1>;
-export type bindCallback_3A_3R<A1, A2, A3, R1, R2, R3> = (
+export type bindCallback3A3R<A1, A2, A3, R1, R2, R3> = (
   a1: A1,
   a2: A2,
   a3: A3,

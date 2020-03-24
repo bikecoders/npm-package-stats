@@ -3,9 +3,9 @@ import { Injectable } from '@nestjs/common';
 import Datastore = require('nedb');
 
 import {
-  bindCallback_1A_2R,
+  bindCallback1A2R,
   handleDBError,
-  bindCallback_3A_3R,
+  bindCallback3A3R,
 } from '../../../common/utils';
 
 import { Observable, bindCallback, of, throwError } from 'rxjs';
@@ -40,7 +40,7 @@ export class UsersRepository {
   create(user: User): Observable<any> {
     const insert = (bindCallback<any, Error, User>(
       this.db.insert.bind(this.db),
-    ) as unknown) as bindCallback_1A_2R<any, Error, User>;
+    ) as unknown) as bindCallback1A2R<any, Error, User>;
 
     return insert(user.toJson()).pipe(
       map(handleDBError),
@@ -65,7 +65,7 @@ export class UsersRepository {
 
     const findOne = (bindCallback<any, Error, User>(
       this.db.findOne.bind(this.db),
-    ) as unknown) as bindCallback_1A_2R<any, Error, User>;
+    ) as unknown) as bindCallback1A2R<any, Error, User>;
 
     return findOne(query).pipe(
       map(handleDBError),
@@ -77,7 +77,7 @@ export class UsersRepository {
   getAllUsers(): Observable<User[]> {
     const findAll = (bindCallback<any, Error, User[]>(
       this.db.find.bind(this.db),
-    ) as unknown) as bindCallback_1A_2R<any, Error, User[]>;
+    ) as unknown) as bindCallback1A2R<any, Error, User[]>;
 
     return findAll({}).pipe(
       map(handleDBError),
@@ -105,7 +105,7 @@ export class UsersRepository {
       Error,
       number,
       boolean
-    >(this.db.update.bind(this.db)) as unknown) as bindCallback_3A_3R<
+    >(this.db.update.bind(this.db)) as unknown) as bindCallback3A3R<
       any,
       any,
       Nedb.UpdateOptions,
