@@ -6,16 +6,16 @@ import { sendMessageHTML } from '../../common';
 jest.mock('../../common');
 
 import { StatsFeature } from './stats.feature';
-import { UsersService } from '../../../shared/users/service/users.service';
-jest.mock('../../../shared/users/service/users.service');
+import { UsersService } from '@core/users/service/users.service';
+jest.mock('@core/users/service/users.service');
 
 import { BaseCommand as BaseCommandMock } from '../__mocks__/base.command';
 jest.mock('../base.command');
 
-import { BotService } from '../../shared/bot/bot.service';
-jest.mock('../../shared/bot/bot.service');
-import { NpmStatsService } from '../../../shared/npm-stats/npm-stats.service';
-jest.mock('../../../shared/npm-stats/npm-stats.service');
+import { BotService } from '../../core/bot/bot.service';
+jest.mock('../../core/bot/bot.service');
+import { NpmStatsService } from '@core/npm-stats/npm-stats.service';
+jest.mock('@core/npm-stats/npm-stats.service');
 
 import { sendStatsMsg } from './common';
 jest.mock('./common');

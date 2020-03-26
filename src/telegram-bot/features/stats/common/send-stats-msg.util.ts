@@ -6,10 +6,9 @@ import { switchMap, mergeMap } from 'rxjs/operators';
 import { sendMessageHTML } from '../../../common';
 import { Template } from '.';
 
-import { User } from '../../../../shared/users/shared/models';
-
-import { NpmStatsService } from '../../../../shared/npm-stats/npm-stats.service';
-import { UsersService } from '../../../../shared/users/service/users.service';
+import { User } from '@core/users/shared/models';
+import { NpmStatsService } from '@core/npm-stats/npm-stats.service';
+import { UsersService } from '@core/users/service/users.service';
 
 export function sendStatsMsg(
   bot: TelegramBot,
