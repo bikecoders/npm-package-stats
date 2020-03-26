@@ -15,15 +15,17 @@ export abstract class BaseCommand {
    * @param bot The TelegramBot instance
    * @param COMMAND The regex of you command
    */
-  constructor(
-    protected bot: TelegramBot,
-    protected readonly COMMAND: RegExp,
-  ) {
-    this.bot.onText(this.COMMAND, (msg, match) => this.commandFunction(msg, match));
+  constructor(protected bot: TelegramBot, protected readonly COMMAND: RegExp) {
+    this.bot.onText(this.COMMAND, (msg, match) =>
+      this.commandFunction(msg, match),
+    );
   }
 
   /**
    * Define in this method what the command is going to do
    */
-  protected abstract commandFunction(msg: TelegramBot.Message, match: RegExpExecArray);
+  protected abstract commandFunction(
+    msg: TelegramBot.Message,
+    match: RegExpExecArray,
+  );
 }

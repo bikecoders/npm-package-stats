@@ -26,8 +26,7 @@ describe('NpmStatsService', () => {
   });
 
   describe('Stats for yesterday', () => {
-
-    describe('\'getstats\' parameters', () => {
+    describe("'getstats' parameters", () => {
       const getDateOfXPassedDays = (days: number): string => {
         const date = new Date();
         date.setDate(date.getDate() - days);
@@ -38,11 +37,11 @@ describe('NpmStatsService', () => {
         service.validateSlug(randomSlug);
       });
 
-      it('should call \'getstats\' with the right slug', () => {
+      it("should call 'getstats' with the right slug", () => {
         expect(npmAPI.slug).toEqual(randomSlug);
       });
 
-      it('should call \'getstats\' with the right start and end date', () => {
+      it("should call 'getstats' with the right start and end date", () => {
         expect(npmAPI.from).toEqual(getDateOfXPassedDays(1));
         expect(npmAPI.to).toEqual(getDateOfXPassedDays(0));
       });
@@ -52,8 +51,9 @@ describe('NpmStatsService', () => {
       it('should get the stats given an slug', () => {
         let dataSent: INMPStats;
 
-        service.getStatsForYesterday(randomSlug)
-          .subscribe((data) => (dataSent = data as INMPStats));
+        service
+          .getStatsForYesterday(randomSlug)
+          .subscribe(data => (dataSent = data as INMPStats));
 
         npmAPI.executeSuccessCallback();
 
@@ -63,10 +63,9 @@ describe('NpmStatsService', () => {
       it('should return an error when the slug is wrong', () => {
         let errorThrown: INMPStatsError;
 
-        service.getStatsForYesterday(randomSlug)
-          .subscribe({
-            error: (error) => (errorThrown = error),
-          });
+        service.getStatsForYesterday(randomSlug).subscribe({
+          error: error => (errorThrown = error),
+        });
 
         npmAPI.executeErrorCallback();
 
@@ -79,8 +78,7 @@ describe('NpmStatsService', () => {
     let isValid: boolean;
 
     beforeEach(() => {
-      service.validateSlug(randomSlug)
-        .subscribe((valid) => (isValid = valid));
+      service.validateSlug(randomSlug).subscribe(valid => (isValid = valid));
     });
 
     it('should return true if the slug is right', () => {

@@ -29,5 +29,4 @@ describe('BotService', () => {
     expect(bot).toBeDefined();
     expect(bot.token).toEqual(tokenBot);
   });
-
 });

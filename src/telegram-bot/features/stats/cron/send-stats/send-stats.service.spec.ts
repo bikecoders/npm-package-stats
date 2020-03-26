@@ -28,9 +28,9 @@ describe('SendStatsService', () => {
 
   beforeEach(() => {
     // Clear all instances and calls to constructor and all methods:
-    (Template.stat as unknown as jest.SpyInstance).mockClear();
-    (UsersService as unknown as jest.SpyInstance).mockClear();
-    (sendStatsMsg as unknown as jest.SpyInstance).mockClear();
+    ((Template.stat as unknown) as jest.SpyInstance).mockClear();
+    ((UsersService as unknown) as jest.SpyInstance).mockClear();
+    ((sendStatsMsg as unknown) as jest.SpyInstance).mockClear();
   });
 
   beforeEach(async () => {
@@ -59,9 +59,8 @@ describe('SendStatsService', () => {
 
   describe('Init', () => {
     it('should subscribe to the cron announcer', () => {
-      const cronSub = (cronService as unknown as CronServiceMock)
-        .cronAnnouncer
-        .source as Subject<void>;
+      const cronSub = ((cronService as unknown) as CronServiceMock)
+        .cronAnnouncer.source as Subject<void>;
 
       expect(cronSub.observers.length).toEqual(1);
     });
@@ -71,14 +70,11 @@ describe('SendStatsService', () => {
     let usersFound: User[];
 
     beforeEach(() => {
-      usersFound = [
-        new User(1),
-        new User(2),
-      ];
+      usersFound = [new User(1), new User(2)];
 
       spyOn(usersService, 'getAllUsers').and.returnValue(of(usersFound));
 
-      (cronService as unknown as CronServiceMock).triggerCallback();
+      ((cronService as unknown) as CronServiceMock).triggerCallback();
     });
 
     it('should send messages', () => {

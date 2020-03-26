@@ -23,7 +23,7 @@ export class StatsFeature extends BaseCommand {
     super(botService.bot, StatsFeature.COMMAND);
   }
 
-  protected commandFunction(msg: TelegramBot.Message, match: RegExpExecArray) {
+  protected commandFunction(msg: TelegramBot.Message) {
     const chatId = msg.chat.id;
 
     sendStatsMsg(this.bot, chatId, this.npmStatsService, this.userService);

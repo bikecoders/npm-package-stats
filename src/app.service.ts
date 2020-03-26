@@ -5,7 +5,7 @@ export class AppService {
   getHealthCheck(): any {
     return {
       status: true,
-      message: 'I\'m ok, thank you',
+      message: "I'm ok, thank you",
     };
   }
 }

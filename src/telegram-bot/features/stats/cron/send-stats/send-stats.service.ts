@@ -17,14 +17,15 @@ export class SendStatsService {
     private usersService: UsersService,
     private npmStatsService: NpmStatsService,
   ) {
-    this.cronService.cronAnnouncer
-      .subscribe(() => this.sendMessage());
+    this.cronService.cronAnnouncer.subscribe(() => this.sendMessage());
   }
 
   private sendMessage() {
-    this.usersService.getAllUsers().pipe(
-      mergeMap(users => users),
-    )
-      .subscribe((user) => sendStatsMsg(this.botService.bot, user, this.npmStatsService));
+    this.usersService
+      .getAllUsers()
+      .pipe(mergeMap(users => users))
+      .subscribe(user =>
+        sendStatsMsg(this.botService.bot, user, this.npmStatsService),
+      );
   }
 }

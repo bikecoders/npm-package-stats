@@ -185,9 +185,7 @@ describe('UsersRepository', () => {
         $set: { [`packages.${packToAdd.npmSlug}`]: packToAdd },
       };
 
-      let query: any;
-      let update: any;
-      ({ query, update } = (Datastore as any).instance.updateParameter);
+      const { query, update } = (Datastore as any).instance.updateParameter;
 
       expect(query).toEqual(expectedQuery);
       expect(update).toEqual(expectedUpdate);

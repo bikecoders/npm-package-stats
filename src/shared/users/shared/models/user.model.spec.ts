@@ -63,10 +63,7 @@ describe('User Model', () => {
       });
 
       it('should return the package in an array', () => {
-        const expectedPackagesIterable = [
-          randomPack,
-          randomPack2,
-        ];
+        const expectedPackagesIterable = [randomPack, randomPack2];
 
         const packagesIt = user.packagesIterative;
 
@@ -82,7 +79,7 @@ describe('User Model', () => {
 
     describe('To Json', () => {
       it('should return the right json format', () => {
-        const userJson = user.toJson();
+        user.toJson();
 
         expect(classToPlain).toHaveBeenCalledWith(user);
       });

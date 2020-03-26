@@ -29,7 +29,12 @@ export class NpmStatsService {
       subject.complete();
     };
 
-    npmAPI.getstat(slug, this.getDateOfXPassedDays(1), this.getDateOfXPassedDays(0), callback);
+    npmAPI.getstat(
+      slug,
+      this.getDateOfXPassedDays(1),
+      this.getDateOfXPassedDays(0),
+      callback,
+    );
 
     return subject.asObservable();
   }

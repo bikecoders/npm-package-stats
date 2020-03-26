@@ -10,7 +10,6 @@ import { UsersService } from '../../../shared/users/service/users.service';
 jest.mock('../../../shared/users/service/users.service');
 
 import { BaseCommand as BaseCommandMock } from '../__mocks__/base.command';
-import { BaseCommand } from '../base.command';
 jest.mock('../base.command');
 
 import { BotService } from '../../shared/bot/bot.service';
@@ -32,19 +31,13 @@ describe('Start', () => {
 
   beforeEach(() => {
     // Clear all instances and calls to constructor and all methods:
-    (sendMessageHTML as unknown as jest.SpyInstance).mockClear();
-    (sendStatsMsg as unknown as jest.SpyInstance).mockClear();
+    ((sendMessageHTML as unknown) as jest.SpyInstance).mockClear();
+    ((sendStatsMsg as unknown) as jest.SpyInstance).mockClear();
   });
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        StatsFeature,
-
-        BotService,
-        NpmStatsService,
-        UsersService,
-      ],
+      providers: [StatsFeature, BotService, NpmStatsService, UsersService],
     }).compile();
 
     botService = module.get<BotService>(BotService);
@@ -72,7 +65,7 @@ describe('Start', () => {
         text: '/stats',
       } as TelegramBot.Message;
 
-      (feature as unknown as BaseCommandMock).triggerCommand(messageReceived);
+      ((feature as unknown) as BaseCommandMock).triggerCommand(messageReceived);
     });
 
     it('should send the stats', () => {

@@ -8,14 +8,7 @@ import { StartFeature } from './start/start.feature';
 import { StatsModule } from './stats/stats.module';
 
 @Module({
-  imports: [
-    BotSharedModule,
-    SharedModule,
-    StatsModule,
-  ],
-  providers: [
-    AddFeature,
-    StartFeature,
-  ],
+  imports: [BotSharedModule, SharedModule, StatsModule],
+  providers: [AddFeature, StartFeature],
 })
 export class FeaturesModule {}

@@ -14,7 +14,10 @@ describe('Add', () => {
       super(botInstance, SomeCommand.COMMAND);
     }
 
-    protected commandFunction(msg: TelegramBot.Message, match: RegExpExecArray) {
+    protected commandFunction(
+      msg: TelegramBot.Message,
+      match: RegExpExecArray,
+    ) {
       this.wasCalled = true;
       this.msgTriggered = msg;
       this.matchTriggered = match;
