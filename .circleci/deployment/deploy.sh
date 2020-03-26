@@ -46,7 +46,7 @@ function install_dependencies() {
 function start_project() {
   echo "$log_prefix Starting project";
   ssh $remote_server_ip -l $remote_server_user -p $remote_server_port \
-    "cd $remote_server_path && npx cross-env $(cat ./src/environments/.envProd | xargs) node ./dist/main.js" > /dev/null &
+    "cd $remote_server_path && npx cross-env $(cat ./src/environments/.envProd | xargs) node ./dist/main.js >> ./database/log.txt" > /dev/null &
 }
 
 # Check if the API is up doing a ping maximum 10 times
