@@ -85,7 +85,10 @@
     },
     "coverageDirectory": "../coverage",
     "testEnvironment": "node",
-    "testResultsProcessor": "jest-sonar-reporter"
+    "testResultsProcessor": "jest-sonar-reporter",
+    "moduleNameMapper": {
+      "@core/(.*)": "<rootDir>/core/$1"
+    }
   },
   "jestSonar": {
     "reportPath": "reports",

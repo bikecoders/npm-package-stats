@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
-import { BotService } from '../../../../../telegram-bot/shared/bot/bot.service';
-jest.mock('../../../../../telegram-bot/shared/bot/bot.service');
+import { BotService } from '../../../../core/bot/bot.service';
+jest.mock('../../../../core/bot/bot.service');
 
 import { SendStatsService } from './send-stats.service';
 import { CronService } from '../cron.service';
@@ -11,12 +11,12 @@ import { CronService as CronServiceMock } from '../__mocks__/cron.service';
 import { Template, sendStatsMsg } from '../../common';
 jest.mock('../../common');
 
-import { UsersService } from '../../../../../shared/users/service/users.service';
-jest.mock('../../../../../shared/users/service/users.service');
-import { NpmStatsService } from '../../../../../shared/npm-stats/__mocks__/npm-stats.service';
+import { UsersService } from '@core/users/service/users.service';
+jest.mock('@core/users/service/users.service');
+import { NpmStatsService } from '@core/npm-stats/__mocks__/npm-stats.service';
 import { Subject, of } from 'rxjs';
-import { User } from '../../../../../shared/users/shared/models';
-jest.mock('../../../../../shared/npm-stats/__mocks__/npm-stats.service');
+import { User } from '@core/users/shared/models';
+jest.mock('@core/npm-stats/__mocks__/npm-stats.service');
 
 describe('SendStatsService', () => {
   let service: SendStatsService;

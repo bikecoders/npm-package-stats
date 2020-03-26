@@ -1,7 +1,7 @@
 import {
   INMPStats,
   INMPStatsError,
-} from '../shared/npm-stats/shared/api-npm.model';
+} from '@core/npm-stats/shared/api-npm.model';
 
 type getStatCallback = (data: INMPStats | INMPStatsError) => void;
 

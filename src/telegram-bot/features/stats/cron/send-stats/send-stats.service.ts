@@ -4,10 +4,10 @@ import { mergeMap } from 'rxjs/operators';
 
 import { sendStatsMsg } from '../../common';
 
-import { BotService } from '../../../../../telegram-bot/shared/bot/bot.service';
+import { BotService } from '../../../../core/bot/bot.service';
 import { CronService } from '../cron.service';
-import { UsersService } from '../../../../../shared/users/service/users.service';
-import { NpmStatsService } from '../../../../../shared/npm-stats/npm-stats.service';
+import { UsersService } from '@core/users/service/users.service';
+import { NpmStatsService } from '@core/npm-stats/npm-stats.service';
 
 @Injectable()
 export class SendStatsService {

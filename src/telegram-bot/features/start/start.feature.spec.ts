@@ -10,12 +10,12 @@ jest.mock('../../common/utils/utils');
 
 import { StartFeature } from './start.feature';
 
-jest.mock('../../../shared/npm-stats/npm-stats.service');
-import { UsersService } from '../../../shared/users/service/users.service';
-jest.mock('../../../shared/users/service/users.service');
-import { BotService } from '../../shared/bot/bot.service';
-jest.mock('../../shared/bot/bot.service');
-import { User } from '../../../shared/users/shared/models/user.model';
+jest.mock('@core/npm-stats/npm-stats.service');
+import { UsersService } from '@core/users/service/users.service';
+jest.mock('@core/users/service/users.service');
+import { BotService } from '../../core/bot/bot.service';
+jest.mock('../../core/bot/bot.service');
+import { User } from '@core/users/shared/models/user.model';
 
 import { BaseCommand as BaseCommandMock } from '../__mocks__/base.command';
 jest.mock('../base.command');

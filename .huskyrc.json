@@ -1,7 +1,7 @@
 {
   "hooks": {
     "commit-msg": "commitlint -e",
-    "pre-commit": "yarn docker lint && yarn docker prestart:prod",
-    "pre-push": "yarn docker test:cov"
+    "pre-commit": "yarn docker lint",
+    "pre-push": "yarn docker prestart:prod && yarn docker test:cov"
   }
 }

@@ -6,15 +6,15 @@ import { Template } from '.';
 jest.mock('../common');
 import { sendMessageHTML } from '../../../common';
 jest.mock('../../../../telegram-bot/common');
-import { User } from '../../../../shared/users/shared/models';
+import { User } from '@core/users/shared/models';
 
-import { INMPStats } from '../../../../shared/npm-stats/shared/api-npm.model';
-import { NpmStatsService } from '../../../../shared/npm-stats/npm-stats.service';
-jest.mock('../../../../shared/npm-stats/npm-stats.service');
-import { NpmStatsService as NpmStatsServiceMock } from '../../../../shared/npm-stats/__mocks__/npm-stats.service';
+import { INMPStats } from '@core/npm-stats/shared/api-npm.model';
+import { NpmStatsService } from '@core/npm-stats/npm-stats.service';
+jest.mock('@core/npm-stats/npm-stats.service');
+import { NpmStatsService as NpmStatsServiceMock } from '@core/npm-stats/__mocks__/npm-stats.service';
 
-import { UsersService } from '../../../../shared/users/service/users.service';
-jest.mock('../../../../shared/users/service/users.service');
+import { UsersService } from '@core/users/service/users.service';
+jest.mock('@core/users/service/users.service');
 
 import { sendStatsMsg } from './send-stats-msg.util';
 import { plainToClass } from 'class-transformer';
