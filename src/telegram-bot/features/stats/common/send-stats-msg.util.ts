@@ -1,9 +1,9 @@
 import * as TelegramBot from 'node-telegram-bot-api';
 
 import { Observable, of } from 'rxjs';
-import { switchMap, mergeMap } from 'rxjs/operators';
+import { mergeMap } from 'rxjs/operators';
 
-import { sendMessageHTML } from '../../../common';
+import { sendMessage } from '../../../common';
 import { Template } from '.';
 
 import { User } from '@core/users/shared/models';
@@ -39,14 +39,14 @@ export function sendStatsMsg(
   }
 
   // Indicate some stuff
-  sendMessageHTML(bot, chatId, Template.disclaimer);
+  sendMessage(bot, chatId, Template.disclaimer);
 
   user$
     .pipe(
       // Iterate the packages
-      switchMap(u => u.packagesIterative),
+      mergeMap(u => u.packagesIterative),
       // Get the stats of that package
       mergeMap(pack => npmStatsService.getStatsForYesterday(pack.npmSlug)),
     )
-    .subscribe(info => sendMessageHTML(bot, chatId, Template.stat(info)));
+    .subscribe(info => sendMessage(bot, chatId, Template.stat(info)));
 }

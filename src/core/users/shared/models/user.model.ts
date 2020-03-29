@@ -1,4 +1,4 @@
-import { classToPlain } from 'class-transformer';
+import { classToPlain, Expose, plainToClass } from 'class-transformer';
 
 export interface IPackage {
   npmSlug: string;
@@ -6,21 +6,32 @@ export interface IPackage {
   github?: any;
 }
 
-interface IPackages {
+export interface IPackages {
   [key: string]: IPackage;
 }
 
 export class User {
   public readonly chatId: number;
 
-  packages: IPackages;
+  get packages(): IPackages {
+    return JSON.parse(JSON.stringify(this._packages));
+  }
+  set packages(packages: IPackages) {
+    this._packages = JSON.parse(JSON.stringify(packages));
+  }
+  @Expose({ name: 'packages' })
+  private _packages: IPackages;
+
+  static toClass(raw: any): User {
+    return plainToClass(User, raw);
+  }
 
   /**
    * Iterate the packages that has the user
-   * @returns IPackage[].
+   * @returns IPackage[]
    */
   get packagesIterative(): IPackage[] {
-    return Object.keys(this.packages).map(key => this.packages[key]);
+    return Object.values(this._packages);
   }
 
   /**
@@ -32,7 +43,7 @@ export class User {
 
   constructor(chatId: number) {
     this.chatId = chatId;
-    this.packages = {};
+    this._packages = {};
   }
 
   /**
@@ -41,7 +52,16 @@ export class User {
    * @param pack The package to add
    */
   addPackage(pack: IPackage) {
-    this.packages[pack.npmSlug] = pack;
+    this._packages[pack.npmSlug] = { ...pack };
+  }
+
+  /**
+   * Remove a package given the npm slug
+   *
+   * @param npmSlug The npm package slug to remove
+   */
+  removePackage(npmSlug: IPackage['npmSlug']) {
+    delete this._packages[npmSlug];
   }
 
   /**
@@ -51,13 +71,13 @@ export class User {
    * @returns true is means that the package is already in the list
    */
   hasPackage(slug: string): boolean {
-    return !!this.packages[slug];
+    return !!this._packages[slug];
   }
 
   /**
    * Transform the instance to a plain javascript object
    */
-  toJson(): any {
-    return classToPlain(this) as any;
+  toJson() {
+    return classToPlain(this);
   }
 }

@@ -61,7 +61,7 @@ export class UsersRepository {
    * @param chatId The chat id of the user that you want to get
    */
   getUser(chatId: number): Observable<User> {
-    const query = { chatId } as User;
+    const query: Partial<User> = { chatId };
 
     const findOne = (bindCallback<any, Error, User>(
       this.db.findOne.bind(this.db),
@@ -70,7 +70,7 @@ export class UsersRepository {
     return findOne(query).pipe(
       map(handleDBError),
       map(rest => rest[0]),
-      map((user: User) => plainToClass(User, user)),
+      map(raw => User.toClass(raw)),
     );
   }
 
@@ -93,9 +93,37 @@ export class UsersRepository {
    * @param pack The package to add
    */
   addPackage(user: User, pack: IPackage) {
-    const query = { chatId: user.chatId } as User;
+    const query: Partial<User> = { chatId: user.chatId };
     const updateCondition = {
       $set: { [`packages.${pack.npmSlug}`]: pack },
+    };
+
+    const update = (bindCallback<
+      any,
+      any,
+      Nedb.UpdateOptions,
+      Error,
+      number,
+      boolean
+    >(this.db.update.bind(this.db)) as unknown) as bindCallback3A3R<
+      any,
+      any,
+      Nedb.UpdateOptions,
+      Error,
+      number,
+      boolean
+    >;
+
+    return update(query, updateCondition, {}).pipe(
+      map(handleDBError),
+      map(rest => rest[0]),
+    );
+  }
+
+  removePackage(chatId: User['chatId'], packageSlug: IPackage['npmSlug']) {
+    const query: Partial<User> = { chatId };
+    const updateCondition = {
+      $unset: { [`packages.${packageSlug}`]: packageSlug },
     };
 
     const update = (bindCallback<

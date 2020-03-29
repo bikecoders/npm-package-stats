@@ -5,6 +5,7 @@
   "author": "bikecoders",
   "license": "MIT",
   "scripts": {
+    "prebuild": "rimraf dist",
     "build": "tsc -p tsconfig.build.json",
     "format": "prettier --write \"src/**/*.ts\"",
     "docker": "cross-env UID=$UID docker-compose run --rm --service-ports server yarn",

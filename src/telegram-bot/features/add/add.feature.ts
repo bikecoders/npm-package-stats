@@ -7,7 +7,7 @@ import { BotService } from '../../core/bot/bot.service';
 import { BaseCommand } from '../base.command';
 import { Template } from './common';
 import { UsersService } from '@core/users/service/users.service';
-import { sendMessageHTML } from '../../common';
+import { sendMessage } from '../../common';
 import { NpmStatsService } from '@core/npm-stats/npm-stats.service';
 
 @Injectable()
@@ -34,7 +34,7 @@ export class AddFeature extends BaseCommand {
         .subscribe(isAValidPackage => {
           if (isAValidPackage) {
             this.userService.addPackage(chatId, packageSlug).subscribe(() => {
-              sendMessageHTML(
+              sendMessage(
                 this.bot,
                 chatId,
                 Template.success(packageSlug),
@@ -42,7 +42,7 @@ export class AddFeature extends BaseCommand {
               );
             });
           } else {
-            sendMessageHTML(
+            sendMessage(
               this.bot,
               chatId,
               Template.packageNotFound(packageSlug),
@@ -51,7 +51,7 @@ export class AddFeature extends BaseCommand {
           }
         });
     } else {
-      sendMessageHTML(this.bot, chatId, Template.wrongCommand, msg.message_id);
+      sendMessage(this.bot, chatId, Template.wrongCommand, msg.message_id);
     }
   }
 }

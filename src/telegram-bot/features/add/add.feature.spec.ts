@@ -17,9 +17,10 @@ import { AddFeature } from './add.feature';
 import { BaseCommand as BaseCommandMock } from '../__mocks__/base.command';
 jest.mock('../base.command');
 
-import { sendMessageHTML } from '../../common';
+import { sendMessage } from '../../common';
 jest.mock('../../common/utils/utils');
 import { Template } from './common';
+import { generateTelegramBotMessage } from '../../../__mocks__/data/telegram-bot-message.mock-data';
 
 describe('AddFeature', () => {
   let feature: AddFeature;
@@ -49,11 +50,7 @@ describe('AddFeature', () => {
 
   describe('Command', () => {
     const buildMessageReceived = (msg: string) =>
-      ({
-        chat: { id: 123 },
-        text: `/add ${msg}`,
-        message_id: 321,
-      } as TelegramBot.Message);
+      generateTelegramBotMessage(`/add ${msg}`);
 
     it('should init base command with the right parameters', () => {
       expect(((feature as unknown) as BaseCommandMock).bot).toEqual(bot);
@@ -79,7 +76,7 @@ describe('AddFeature', () => {
 
         ((feature as unknown) as BaseCommandMock).triggerCommand(msg);
 
-        expect(sendMessageHTML).toHaveBeenCalledWith(
+        expect(sendMessage).toHaveBeenCalledWith(
           bot,
           msg.chat.id,
           Template.wrongCommand,
@@ -117,7 +114,7 @@ describe('AddFeature', () => {
         it('should send that the package is valid after write on DB', () => {
           ((npmStatsService as unknown) as NpmStatsServiceMock).validateSlugSuccess();
 
-          expect(sendMessageHTML).toHaveBeenCalledWith(
+          expect(sendMessage).toHaveBeenCalledWith(
             bot,
             msg.chat.id,
             Template.success(slug),
@@ -130,7 +127,7 @@ describe('AddFeature', () => {
         it('should send that the package wrong, was not found', () => {
           ((npmStatsService as unknown) as NpmStatsServiceMock).validateSlugFalse();
 
-          expect(sendMessageHTML).toHaveBeenCalledWith(
+          expect(sendMessage).toHaveBeenCalledWith(
             bot,
             msg.chat.id,
             Template.packageNotFound(slug),

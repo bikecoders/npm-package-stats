@@ -1,5 +1,6 @@
 import * as TelegramBotReal from 'node-telegram-bot-api';
 import { Subject } from 'rxjs';
+import { Publisher } from '../common/utils/observer-pattern/observer-pattern';
 
 type onTextCallback = (msg: TelegramBotReal.Message, match) => void;
 
@@ -21,9 +22,12 @@ class TelegramBot {
 
   private messageQueue: IMessageQueue[] = [];
 
+  private publisher: Publisher;
+
   constructor(token: string, constructorOptions?) {
     this.token = token;
     this.constructorOptions = constructorOptions;
+    this.publisher = new Publisher();
   }
 
   getOnTexts(regex: RegExp): onTextCallback {
@@ -80,6 +84,20 @@ class TelegramBot {
   triggerMessageSentError403() {
     this.triggerMessageSentErrorAny(403);
   }
+
+  on(event: string, listener: (query: TelegramBotReal.CallbackQuery) => void) {
+    this.publisher.addSubscriber(event, listener);
+  }
+
+  triggerOn(event: string, param: TelegramBotReal.CallbackQuery) {
+    this.publisher.notifySubscriber(event, param);
+  }
+
+  answerCallbackQuery = jest.fn().mockImplementation(() => Promise.resolve());
+  editMessageReplyMarkup = jest
+    .fn()
+    .mockImplementation(() => Promise.resolve());
+  editMessageText = jest.fn().mockImplementation(() => Promise.resolve());
 
   private errorConstructor(errCode: number) {
     return {

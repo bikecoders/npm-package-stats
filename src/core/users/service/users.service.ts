@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { switchMap, map, tap } from 'rxjs/operators';
+import { map, tap, mergeMap } from 'rxjs/operators';
 import { of, Observable } from 'rxjs';
 
 import { User, IPackage } from '../shared/models';
@@ -21,9 +21,9 @@ export class UsersService {
    * @param chatId The chat ID that is making the request
    * @param slug THe slug of the npm package
    */
-  addPackage(chatId: number, slug: string): Observable<User> {
+  addPackage(chatId: User['chatId'], slug: string): Observable<User> {
     return this.getUser(chatId).pipe(
-      switchMap(user => {
+      mergeMap(user => {
         if (!user.hasPackage(slug)) {
           const pack: IPackage = {
             npmSlug: slug,
@@ -40,11 +40,25 @@ export class UsersService {
     );
   }
 
-  getUser(chatId: number): Observable<User> {
+  getUser(chatId: User['chatId']): Observable<User> {
     return this.usersRepository.getUser(chatId);
   }
 
   getAllUsers(): Observable<User[]> {
     return this.usersRepository.getAllUsers();
+  }
+
+  removePackage(
+    chatId: User['chatId'],
+    packageSlug: IPackage['npmSlug'],
+  ): Observable<User> {
+    return this.getUser(chatId).pipe(
+      mergeMap(user => {
+        return this.usersRepository.removePackage(chatId, packageSlug).pipe(
+          tap(() => user.removePackage(packageSlug)),
+          map(() => user),
+        );
+      }),
+    );
   }
 }

@@ -4,7 +4,7 @@ import * as TelegramBot from 'node-telegram-bot-api';
 
 import { Template } from '.';
 jest.mock('../common');
-import { sendMessageHTML } from '../../../common';
+import { sendMessage } from '../../../common';
 jest.mock('../../../../telegram-bot/common');
 import { User } from '@core/users/shared/models';
 
@@ -17,37 +17,23 @@ import { UsersService } from '@core/users/service/users.service';
 jest.mock('@core/users/service/users.service');
 
 import { sendStatsMsg } from './send-stats-msg.util';
-import { plainToClass } from 'class-transformer';
 import { of } from 'rxjs';
+import { generateUserWithNPackage } from '../../../../__mocks__/data';
 
 describe('Send Message', () => {
   let npmStatsService: NpmStatsService;
   let usersService: UsersService;
 
   let bot: TelegramBot;
-
   let user: User;
-  let chatId: number;
-
   let getStatsForYesterdaySpy: jasmine.Spy;
 
-  beforeEach(() => {
-    // Clear all instances and calls to constructor and all methods:
-    ((UsersService as unknown) as jest.SpyInstance).mockClear();
-    ((sendMessageHTML as unknown) as jest.SpyInstance).mockClear();
+  afterEach(() => {
+    jest.clearAllMocks();
   });
 
   beforeEach(() => {
-    chatId = 123456;
-
-    const plainUser = {
-      chatId,
-      packages: {
-        angular: { npmSlug: 'angular' },
-        'ngx-sticky-directive': { npmSlug: 'ngx-sticky-directive' },
-      },
-    };
-    user = plainToClass(User, plainUser);
+    user = generateUserWithNPackage(4);
   });
 
   beforeEach(async () => {
@@ -72,7 +58,7 @@ describe('Send Message', () => {
     });
 
     it('should send the disclaimer', () => {
-      expect(sendMessageHTML).toHaveBeenCalledWith(
+      expect(sendMessage).toHaveBeenCalledWith(
         bot,
         user.chatId,
         Template.disclaimer,
@@ -91,11 +77,11 @@ describe('Send Message', () => {
       });
 
       it('should send the message for every package', () => {
-        expect(sendMessageHTML).toHaveBeenCalledTimes(user.nPackages + 1);
+        expect(sendMessage).toHaveBeenCalledTimes(user.nPackages + 1);
       });
 
       it('should send the message', () => {
-        expect(sendMessageHTML).toHaveBeenCalledWith(
+        expect(sendMessage).toHaveBeenCalledWith(
           bot,
           user.chatId,
           jasmine.any(String),
@@ -125,11 +111,11 @@ describe('Send Message', () => {
 
     beforeEach(() => {
       getUserSpy = spyOn(usersService, 'getUser').and.returnValue(of(user));
-      sendStatsMsg(bot, chatId, npmStatsService, usersService);
+      sendStatsMsg(bot, user.chatId, npmStatsService, usersService);
     });
 
     it('should get the user', () => {
-      expect(getUserSpy).toHaveBeenCalledWith(chatId);
+      expect(getUserSpy).toHaveBeenCalledWith(user.chatId);
     });
   });
 });
