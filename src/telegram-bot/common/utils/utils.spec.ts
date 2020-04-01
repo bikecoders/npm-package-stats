@@ -3,10 +3,10 @@ import * as TelegramBot from 'node-telegram-bot-api';
 import { Observable, NEVER, Subscription } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
-import { sendMessageHTML } from './utils';
+import { sendMessage } from './utils';
 
 describe('Utils', () => {
-  describe('sendMessageHTML', () => {
+  describe('sendMessage', () => {
     let bot;
     let chatID: number;
     let message: string;
@@ -27,9 +27,11 @@ describe('Utils', () => {
     });
 
     it('should always indicate the parse mode is HTML', () => {
-      const optionsUsed = { parse_mode: 'HTML' };
+      const optionsUsed: TelegramBot.SendMessageOptions = {
+        parse_mode: 'HTML',
+      };
 
-      sendMessageHTML(bot, chatID, message);
+      sendMessage(bot, chatID, message);
 
       expect(botSendMessageSpy).toHaveBeenCalledWith(
         jasmine.any(Number),
@@ -39,7 +41,7 @@ describe('Utils', () => {
     });
 
     it('should send the message to the correct chat', () => {
-      sendMessageHTML(bot, chatID, message);
+      sendMessage(bot, chatID, message);
 
       expect(botSendMessageSpy).toHaveBeenCalledWith(
         chatID,
@@ -50,12 +52,12 @@ describe('Utils', () => {
 
     describe('Reply', () => {
       it('should send the message as a reply', () => {
-        const optionsUsed = {
+        const optionsUsed: TelegramBot.SendMessageOptions = {
           parse_mode: 'HTML',
           reply_to_message_id: replyToMessageId,
         };
 
-        sendMessageHTML(bot, chatID, message, replyToMessageId);
+        sendMessage(bot, chatID, message, replyToMessageId);
 
         expect(botSendMessageSpy).toHaveBeenCalledWith(
           jasmine.any(Number),
@@ -65,11 +67,40 @@ describe('Utils', () => {
       });
     });
 
-    describe('Return', () => {
+    describe('Inline Keyboard', () => {
+      const buildKey = (text: string): TelegramBot.InlineKeyboardButton => ({
+        text,
+        callback_data: text,
+      });
+
+      it('should the message as an Inline Keyboard', () => {
+        const keyboard: TelegramBot.InlineKeyboardButton[][] = [
+          [buildKey('1'), buildKey('2')],
+          [buildKey('3'), buildKey('4')],
+        ];
+        const optionsUsed: TelegramBot.SendMessageOptions = {
+          parse_mode: 'HTML',
+          reply_to_message_id: null,
+          reply_markup: {
+            inline_keyboard: keyboard,
+          },
+        };
+
+        sendMessage(bot, chatID, message, null, keyboard);
+
+        expect(botSendMessageSpy).toHaveBeenCalledWith(
+          jasmine.any(Number),
+          jasmine.any(String),
+          optionsUsed,
+        );
+      });
+    });
+
+    describe('Function Return', () => {
       let sent$: Observable<TelegramBot.Message | any>;
 
       beforeEach(() => {
-        sent$ = sendMessageHTML(bot, chatID, message);
+        sent$ = sendMessage(bot, chatID, message);
       });
 
       it('should return an observable that emits the message when is sent', () => {
@@ -97,7 +128,7 @@ describe('Utils', () => {
       let sent$: Observable<TelegramBot.Message | any>;
 
       beforeEach(() => {
-        sent$ = sendMessageHTML(bot, chatID, message);
+        sent$ = sendMessage(bot, chatID, message);
       });
 
       describe('Error 403', () => {

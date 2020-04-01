@@ -7,6 +7,12 @@ import { User, IPackage } from '../shared/models';
 import { UsersRepository } from '../repository/users.repository';
 jest.mock('../repository/users.repository');
 import { UsersService } from './users.service';
+import {
+  generatePackage,
+  generateUserWithNPackage,
+  predeterminedChatId,
+  generateUserWithEmptyPackages,
+} from '../../../__mocks__/data/user.mock-data';
 
 describe('UsersService', () => {
   let service: UsersService;
@@ -16,8 +22,8 @@ describe('UsersService', () => {
   let pack: IPackage;
 
   beforeEach(() => {
-    userFound = new User(1234);
-    pack = { npmSlug: 'angular' };
+    userFound = generateUserWithEmptyPackages();
+    pack = generatePackage();
 
     userFound.addPackage(pack);
   });
@@ -91,7 +97,7 @@ describe('UsersService', () => {
       let addPackageSpy: jasmine.Spy;
 
       beforeEach(() => {
-        newPackage = { npmSlug: 'nest' };
+        newPackage = generatePackage();
         addPackageSpy = spyOn(userRepo, 'addPackage').and.returnValue(of({}));
       });
 
@@ -111,11 +117,41 @@ describe('UsersService', () => {
     });
   });
 
+  describe('Remove Package', () => {
+    let removePackageSpy: jasmine.Spy;
+
+    const removePackage = (chatId: number, packageSlug: string) => {
+      service.removePackage(chatId, packageSlug).subscribe();
+    };
+
+    beforeEach(() => {
+      spyOn(userRepo, 'getUser').and.returnValue(of(userFound));
+      removePackageSpy = spyOn(userRepo, 'removePackage').and.returnValue(
+        of(1),
+      );
+    });
+
+    it('should call the repository to remove the package from the DB', () => {
+      removePackage(userFound.chatId, pack.npmSlug);
+
+      expect(removePackageSpy).toHaveBeenCalledWith(
+        userFound.chatId,
+        pack.npmSlug,
+      );
+    });
+
+    it('should update user model packages', () => {
+      removePackage(userFound.chatId, pack.npmSlug);
+
+      expect(userFound.hasPackage(pack.npmSlug)).toBeFalsy();
+    });
+  });
+
   describe('Get User', () => {
     let chatId: number;
 
     beforeEach(() => {
-      chatId = 1234;
+      chatId = predeterminedChatId;
 
       // Spies
       spyOn(userRepo, 'getUser').and.returnValue(of(userFound));
@@ -144,8 +180,7 @@ describe('UsersService', () => {
       randomUsers = [];
 
       for (let index = 0; index < nUsers; index++) {
-        const newUser = new User(index);
-        randomUsers.push(newUser);
+        randomUsers.push(generateUserWithNPackage(index));
       }
 
       // Spies

@@ -16,7 +16,7 @@ export class StatsFeature extends BaseCommand {
   public static readonly COMMAND = /\/stats/;
 
   constructor(
-    private botService: BotService,
+    botService: BotService,
     private npmStatsService: NpmStatsService,
     private userService: UsersService,
   ) {

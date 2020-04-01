@@ -9,7 +9,7 @@ import { UsersService } from '@core/users/service/users.service';
 
 import { User } from '@core/users/shared/models';
 import { Template } from './common';
-import { sendMessageHTML } from '../../common';
+import { sendMessage } from '../../common';
 
 @Injectable()
 export class StartFeature extends BaseCommand {
@@ -25,7 +25,7 @@ export class StartFeature extends BaseCommand {
 
     // TODO catch any error
     this.userService.create(user).subscribe(() => {
-      sendMessageHTML(this.bot, chatId, Template.welcome);
+      sendMessage(this.bot, chatId, Template.welcome);
     });
   }
 }

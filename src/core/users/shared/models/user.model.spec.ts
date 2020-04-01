@@ -1,6 +1,9 @@
 import { User, IPackage } from './user.model';
-import { classToPlain } from 'class-transformer';
-jest.mock('class-transformer');
+import {
+  generatePackage,
+  predeterminedChatId,
+  generateUserWithEmptyPackages,
+} from '../../../../__mocks__/data/user.mock-data';
 
 describe('User Model', () => {
   let user: User;
@@ -9,10 +12,8 @@ describe('User Model', () => {
   let randomPack: IPackage;
 
   beforeEach(() => {
-    randomPack = {
-      npmSlug: 'randomSlug',
-    };
-    randomChatID = 12345;
+    randomPack = generatePackage();
+    randomChatID = predeterminedChatId;
 
     user = new User(randomChatID);
   });
@@ -29,15 +30,13 @@ describe('User Model', () => {
     });
 
     it('should not add a repeated package', () => {
-      const pack2: IPackage = {
-        npmSlug: 'randomSlug2',
-      };
+      const pack2 = generatePackage();
 
-      user.addPackage(Object.assign({}, randomPack));
-      user.addPackage(Object.assign({}, pack2));
-      user.addPackage(Object.assign({}, pack2));
+      user.addPackage(randomPack);
+      user.addPackage(pack2);
+      user.addPackage(pack2);
 
-      expect(Object.keys(user.packages).length).toEqual(2);
+      expect(user.nPackages).toEqual(2);
     });
 
     describe('Have Package', () => {
@@ -56,7 +55,7 @@ describe('User Model', () => {
       let randomPack2: IPackage;
 
       beforeEach(() => {
-        randomPack2 = { npmSlug: 'randomSlug2' } as IPackage;
+        randomPack2 = generatePackage();
 
         user.addPackage(randomPack);
         user.addPackage(randomPack2);
@@ -77,12 +76,48 @@ describe('User Model', () => {
       });
     });
 
-    describe('To Json', () => {
-      it('should return the right json format', () => {
-        user.toJson();
+    describe('Remove Package', () => {
+      let packageToRemove: IPackage;
 
-        expect(classToPlain).toHaveBeenCalledWith(user);
+      beforeEach(() => {
+        packageToRemove = generatePackage();
+
+        user.addPackage(randomPack);
+        user.addPackage(packageToRemove);
+        user.addPackage(generatePackage());
       });
+
+      it('should remove the package form the list', () => {
+        const userPackages = user.packages;
+        delete userPackages[packageToRemove.npmSlug];
+
+        user.removePackage(packageToRemove.npmSlug);
+
+        expect(userPackages).toEqual(user.packages);
+      });
+    });
+  });
+
+  describe('To JSON', () => {
+    let user: User;
+    let expectedUser: Partial<User>;
+
+    beforeEach(() => {
+      user = generateUserWithEmptyPackages();
+      user.addPackage({ npmSlug: '@angular/cli' });
+
+      expectedUser = {
+        chatId: predeterminedChatId,
+        packages: {
+          '@angular/cli': { npmSlug: '@angular/cli' },
+        },
+      };
+    });
+
+    it('should return the user in right json format', () => {
+      const plainUser = user.toJson();
+
+      expect(plainUser).toEqual(expectedUser);
     });
   });
 });

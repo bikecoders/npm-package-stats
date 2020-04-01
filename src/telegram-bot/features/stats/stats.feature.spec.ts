@@ -2,7 +2,6 @@ import { Test, TestingModule } from '@nestjs/testing';
 
 import * as TelegramBot from 'node-telegram-bot-api';
 
-import { sendMessageHTML } from '../../common';
 jest.mock('../../common');
 
 import { StatsFeature } from './stats.feature';
@@ -19,6 +18,7 @@ jest.mock('@core/npm-stats/npm-stats.service');
 
 import { sendStatsMsg } from './common';
 jest.mock('./common');
+import { generateTelegramBotMessage } from '../../../__mocks__/data/telegram-bot-message.mock-data';
 
 describe('Start', () => {
   let feature: StatsFeature;
@@ -29,10 +29,8 @@ describe('Start', () => {
   // Telegram bot instance
   let bot;
 
-  beforeEach(() => {
-    // Clear all instances and calls to constructor and all methods:
-    ((sendMessageHTML as unknown) as jest.SpyInstance).mockClear();
-    ((sendStatsMsg as unknown) as jest.SpyInstance).mockClear();
+  afterEach(() => {
+    jest.clearAllMocks();
   });
 
   beforeEach(async () => {
@@ -55,15 +53,8 @@ describe('Start', () => {
   describe('Command', () => {
     let messageReceived: TelegramBot.Message;
 
-    let chatId: number;
-
     beforeEach(() => {
-      chatId = 123;
-
-      messageReceived = {
-        chat: { id: chatId },
-        text: '/stats',
-      } as TelegramBot.Message;
+      messageReceived = generateTelegramBotMessage('/stats');
 
       ((feature as unknown) as BaseCommandMock).triggerCommand(messageReceived);
     });
@@ -71,7 +62,7 @@ describe('Start', () => {
     it('should send the stats', () => {
       expect(sendStatsMsg).toHaveBeenCalledWith(
         bot,
-        chatId,
+        messageReceived.chat.id,
         npmStatsService,
         usersService,
       );

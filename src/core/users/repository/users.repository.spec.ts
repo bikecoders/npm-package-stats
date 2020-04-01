@@ -4,7 +4,11 @@ import { UsersRepository } from './users.repository';
 import * as Datastore from 'nedb';
 
 import { User, IPackage } from '../shared/models';
-import { classToPlain } from 'class-transformer';
+import {
+  generateUserWithEmptyPackages,
+  predeterminedChatId,
+  generateUserWithNPackage,
+} from '../../../__mocks__/data/user.mock-data';
 
 describe('UsersRepository', () => {
   let repository: UsersRepository;
@@ -46,7 +50,7 @@ describe('UsersRepository', () => {
       repository.create(newUser).toPromise();
 
     beforeEach(() => {
-      userToCreate = new User(12345);
+      userToCreate = generateUserWithEmptyPackages();
     });
 
     it('should create the user', async () => {
@@ -107,8 +111,8 @@ describe('UsersRepository', () => {
     let randomUser: User;
 
     beforeEach(() => {
-      chatId = 1234;
-      randomUser = new User(chatId);
+      chatId = predeterminedChatId;
+      randomUser = generateUserWithNPackage(2, predeterminedChatId);
 
       repository.getUser(chatId).subscribe(user => (userFound = user));
       (Datastore as any).instance.triggerAction(randomUser.toJson());
@@ -146,7 +150,7 @@ describe('UsersRepository', () => {
     beforeEach(() => {
       repository.getAllUsers().subscribe(users => (usersFound = users));
 
-      const plainRandomUsers = randomUsers.map(u => classToPlain(u));
+      const plainRandomUsers = randomUsers.map(u => u.toJson());
 
       (Datastore as any).instance.triggerAction(plainRandomUsers);
     });
@@ -183,6 +187,31 @@ describe('UsersRepository', () => {
       const expectedQuery = { chatId };
       const expectedUpdate = {
         $set: { [`packages.${packToAdd.npmSlug}`]: packToAdd },
+      };
+
+      const { query, update } = (Datastore as any).instance.updateParameter;
+
+      expect(query).toEqual(expectedQuery);
+      expect(update).toEqual(expectedUpdate);
+    });
+  });
+
+  describe('Remove Package', () => {
+    let chatId: number;
+    let packageToRemoveSlug: IPackage['npmSlug'];
+
+    beforeEach(() => {
+      chatId = 1234;
+      packageToRemoveSlug = '@angular/core';
+
+      repository.removePackage(chatId, packageToRemoveSlug).subscribe();
+      (Datastore as any).instance.triggerAction();
+    });
+
+    it('should try to remove a package given the chat id', () => {
+      const expectedQuery = { chatId };
+      const expectedUpdate = {
+        $unset: { [`packages.${packageToRemoveSlug}`]: packageToRemoveSlug },
       };
 
       const { query, update } = (Datastore as any).instance.updateParameter;

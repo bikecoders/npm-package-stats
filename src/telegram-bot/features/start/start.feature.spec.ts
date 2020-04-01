@@ -5,7 +5,7 @@ import * as TelegramBot from 'node-telegram-bot-api';
 import { NEVER, of } from 'rxjs';
 
 import { Template } from './common';
-import { sendMessageHTML } from '../../common';
+import { sendMessage } from '../../common';
 jest.mock('../../common/utils/utils');
 
 import { StartFeature } from './start.feature';
@@ -77,7 +77,7 @@ describe('Start', () => {
 
       ((feature as unknown) as BaseCommandMock).triggerCommand(messageReceived);
 
-      expect(sendMessageHTML).toHaveBeenCalledWith(
+      expect(sendMessage).toHaveBeenCalledWith(
         bot,
         messageReceived.chat.id,
         Template.welcome,
