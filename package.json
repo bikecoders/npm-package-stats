@@ -1,6 +1,6 @@
 {
   "name": "npm-package-stats",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "description": "A Telegram Bot to get telegram packages stats",
   "author": "bikecoders",
   "license": "MIT",
