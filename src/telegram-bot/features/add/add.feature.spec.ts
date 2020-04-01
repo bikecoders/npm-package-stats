@@ -4,11 +4,11 @@ import { of } from 'rxjs';
 
 import * as TelegramBot from 'node-telegram-bot-api';
 
-import { NpmStatsService } from '@core/npm-stats/npm-stats.service';
-jest.mock('@core/npm-stats/npm-stats.service');
-import { NpmStatsService as NpmStatsServiceMock } from '@core/npm-stats/__mocks__/npm-stats.service';
-import { UsersService } from '@core/users/service/users.service';
-jest.mock('@core/users/service/users.service');
+import { NpmStatsService } from '../../../core/npm-stats/npm-stats.service';
+jest.mock('../../../core/npm-stats/npm-stats.service');
+import { NpmStatsService as NpmStatsServiceMock } from '../../../core/npm-stats/__mocks__/npm-stats.service';
+import { UsersService } from '../../../core/users/service/users.service';
+jest.mock('../../../core/users/service/users.service');
 import { BotService } from '../../core/bot/bot.service';
 jest.mock('../../core/bot/bot.service');
 

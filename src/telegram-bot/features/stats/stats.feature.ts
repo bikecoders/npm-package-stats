@@ -6,8 +6,8 @@ import { BaseCommand } from '../base.command';
 
 import { BotService } from '../../core/bot/bot.service';
 
-import { NpmStatsService } from '@core/npm-stats/npm-stats.service';
-import { UsersService } from '@core/users/service/users.service';
+import { NpmStatsService } from '../../../core/npm-stats/npm-stats.service';
+import { UsersService } from '../../../core/users/service/users.service';
 
 import { sendStatsMsg } from './common';
 

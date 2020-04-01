@@ -11,12 +11,12 @@ import { CronService as CronServiceMock } from '../__mocks__/cron.service';
 import { Template, sendStatsMsg } from '../../common';
 jest.mock('../../common');
 
-import { UsersService } from '@core/users/service/users.service';
-jest.mock('@core/users/service/users.service');
-import { NpmStatsService } from '@core/npm-stats/__mocks__/npm-stats.service';
+import { UsersService } from '../../../../../core/users/service/users.service';
+jest.mock('../../../../../core/users/service/users.service');
+import { NpmStatsService } from '../../../../../core/npm-stats/__mocks__/npm-stats.service';
 import { Subject, of } from 'rxjs';
-import { User } from '@core/users/shared/models';
-jest.mock('@core/npm-stats/__mocks__/npm-stats.service');
+import { User } from '../../../../../core/users/shared/models';
+jest.mock('../../../../../core/npm-stats/__mocks__/npm-stats.service');
 
 describe('SendStatsService', () => {
   let service: SendStatsService;

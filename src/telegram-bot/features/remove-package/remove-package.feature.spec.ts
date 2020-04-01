@@ -4,8 +4,8 @@ import { of } from 'rxjs';
 
 import { RemoveFeature } from './remove-package.feature';
 
-import { UsersService } from '@core/users/service/users.service';
-jest.mock('@core/users/service/users.service');
+import { UsersService } from '../../../core/users/service/users.service';
+jest.mock('../../../core/users/service/users.service');
 import { InlineResponsesService } from '../../core/inline-responses/inline-responses.service';
 import { InlineResponsesService as InlineResponsesServiceMock } from '../../core/inline-responses/__mocks__/inline-responses.service';
 jest.mock('../../core/inline-responses/inline-responses.service');
@@ -24,7 +24,7 @@ import { sendMessage } from '../../common';
 jest.mock('../../common');
 import { Template } from './common';
 import { KeyBoardEventsKeys } from '../../../telegram-bot/core/inline-responses/common';
-import { IPackage, User } from '@core/users/shared/models';
+import { IPackage, User } from '../../../core/users/shared/models';
 
 describe('Remove Package Feature', () => {
   let feature: RemoveFeature;
