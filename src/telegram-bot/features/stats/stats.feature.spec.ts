@@ -5,16 +5,16 @@ import * as TelegramBot from 'node-telegram-bot-api';
 jest.mock('../../common');
 
 import { StatsFeature } from './stats.feature';
-import { UsersService } from '@core/users/service/users.service';
-jest.mock('@core/users/service/users.service');
+import { UsersService } from '../../../core/users/service/users.service';
+jest.mock('../../../core/users/service/users.service');
 
 import { BaseCommand as BaseCommandMock } from '../__mocks__/base.command';
 jest.mock('../base.command');
 
 import { BotService } from '../../core/bot/bot.service';
 jest.mock('../../core/bot/bot.service');
-import { NpmStatsService } from '@core/npm-stats/npm-stats.service';
-jest.mock('@core/npm-stats/npm-stats.service');
+import { NpmStatsService } from '../../../core/npm-stats/npm-stats.service';
+jest.mock('../../../core/npm-stats/npm-stats.service');
 
 import { sendStatsMsg } from './common';
 jest.mock('./common');

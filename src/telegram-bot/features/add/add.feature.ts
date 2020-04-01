@@ -6,9 +6,9 @@ import { BotService } from '../../core/bot/bot.service';
 
 import { BaseCommand } from '../base.command';
 import { Template } from './common';
-import { UsersService } from '@core/users/service/users.service';
+import { UsersService } from '../../../core/users/service/users.service';
 import { sendMessage } from '../../common';
-import { NpmStatsService } from '@core/npm-stats/npm-stats.service';
+import { NpmStatsService } from '../../../core/npm-stats/npm-stats.service';
 
 @Injectable()
 export class AddFeature extends BaseCommand {

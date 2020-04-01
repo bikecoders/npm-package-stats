@@ -1,4 +1,4 @@
-import { User, IPackage } from '@core/users/shared/models';
+import { User, IPackage } from '../../core/users/shared/models';
 
 function createUUID() {
   let dt = new Date().getTime();

@@ -4,7 +4,7 @@ import { map, mergeMap } from 'rxjs/operators';
 import { of, EMPTY } from 'rxjs';
 
 import { BaseCommand } from '../base.command';
-import { UsersService } from '@core/users/service/users.service';
+import { UsersService } from '../../../core/users/service/users.service';
 import { BotService } from '../../../telegram-bot/core/bot/bot.service';
 import { sendMessage } from '../../../telegram-bot/common';
 import { Template } from './common';
@@ -13,7 +13,7 @@ import {
   KeyBoardEventsKeys,
 } from '../../core/inline-responses/common';
 import { InlineResponsesService } from '../../core/inline-responses/inline-responses.service';
-import { User, IPackage } from '@core/users/shared/models';
+import { User, IPackage } from '../../../core/users/shared/models';
 
 @Injectable()
 export class RemoveFeature extends BaseCommand {

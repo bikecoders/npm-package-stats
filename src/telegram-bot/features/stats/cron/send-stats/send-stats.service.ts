@@ -6,8 +6,8 @@ import { sendStatsMsg } from '../../common';
 
 import { BotService } from '../../../../core/bot/bot.service';
 import { CronService } from '../cron.service';
-import { UsersService } from '@core/users/service/users.service';
-import { NpmStatsService } from '@core/npm-stats/npm-stats.service';
+import { UsersService } from '../../../../../core/users/service/users.service';
+import { NpmStatsService } from '../../../../../core/npm-stats/npm-stats.service';
 
 @Injectable()
 export class SendStatsService {

@@ -1,4 +1,4 @@
-import { INMPStats } from '@core/npm-stats/shared/api-npm.model';
+import { INMPStats } from '../../../../core/npm-stats/shared/api-npm.model';
 import { Utils } from '../../../../common';
 
 export const stat = (stats: INMPStats) =>
