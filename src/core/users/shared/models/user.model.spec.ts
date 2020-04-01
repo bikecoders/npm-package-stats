@@ -99,7 +99,6 @@ describe('User Model', () => {
   });
 
   describe('To JSON', () => {
-    let user: User;
     let expectedUser: Partial<User>;
 
     beforeEach(() => {

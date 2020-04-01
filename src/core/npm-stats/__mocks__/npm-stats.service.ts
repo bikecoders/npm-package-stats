@@ -8,7 +8,6 @@ export class NpmStatsService {
     slug: string;
   }[] = [];
 
-  public slugToValidate: string[] = [];
   public slugToGetStats: string[] = [];
 
   public infoSent: (INMPStats | INMPStatsError)[] = [];
@@ -54,30 +53,18 @@ export class NpmStatsService {
   // ---------- getStatsForYesterday ----------------
 
   // ---------- validateSlug ----------------
-  validateSlug(slug: string): Observable<boolean> {
-    const sub = new Subject<any>();
+  private validateSlugTrigger = new Subject<boolean>();
 
-    this.requests.push({ sub, slug });
-
-    this.slugToValidate.push(slug);
-
-    return sub.asObservable();
-  }
+  public validateSlug = jest.fn().mockImplementation(() => {
+    return this.validateSlugTrigger.asObservable();
+  });
 
   validateSlugSuccess() {
-    this.requests.forEach(data => {
-      data.sub.next(true);
-
-      data.sub.complete();
-    });
+    this.validateSlugTrigger.next(true);
   }
 
   validateSlugFalse() {
-    this.requests.forEach(data => {
-      data.sub.next(false);
-
-      data.sub.complete();
-    });
+    this.validateSlugTrigger.next(false);
   }
   // ---------- validateSlug ----------------
 }

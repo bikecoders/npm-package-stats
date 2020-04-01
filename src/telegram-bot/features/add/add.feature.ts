@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { tap } from 'rxjs/operators';
 
 import * as TelegramBot from 'node-telegram-bot-api';
 
@@ -26,32 +27,73 @@ export class AddFeature extends BaseCommand {
     const chatId = msg.chat.id;
     // Remove multiple spaces just for one
     const msgWithoutSpaces = msg.text.replace(/\s+/g, ' ').trim();
-    const packageSlug = msgWithoutSpaces.split(' ')[1] || '';
+    const packageSlug = this.sanitizePackageSlug(msgWithoutSpaces);
 
     if (!!packageSlug) {
-      this.npmStatsService
-        .validateSlug(packageSlug)
-        .subscribe(isAValidPackage => {
-          if (isAValidPackage) {
-            this.userService.addPackage(chatId, packageSlug).subscribe(() => {
-              sendMessage(
-                this.bot,
-                chatId,
-                Template.success(packageSlug),
-                msg.message_id,
-              );
-            });
-          } else {
+      this.addPackage(packageSlug, chatId, msg);
+    } else {
+      sendMessage(
+        this.bot,
+        chatId,
+        Template.tellMeThePackage,
+        msg.message_id,
+        null,
+        true,
+      )
+        .pipe(
+          tap(message => {
+            this.bot.onReplyToMessage(
+              message.chat.id,
+              message.message_id,
+              messageReplied => {
+                const packageSlugToAdd = this.sanitizePackageSlug(
+                  messageReplied.text,
+                  false,
+                );
+                this.addPackage(packageSlugToAdd, chatId, message);
+              },
+            );
+          }),
+        )
+        .subscribe();
+    }
+  }
+
+  private addPackage(
+    packageSlug: string,
+    chatId: number,
+    msg: TelegramBot.Message,
+  ) {
+    this.npmStatsService
+      .validateSlug(packageSlug)
+      .subscribe(isAValidPackage => {
+        if (isAValidPackage) {
+          this.userService.addPackage(chatId, packageSlug).subscribe(() => {
             sendMessage(
               this.bot,
               chatId,
-              Template.packageNotFound(packageSlug),
+              Template.success(packageSlug),
               msg.message_id,
             );
-          }
-        });
-    } else {
-      sendMessage(this.bot, chatId, Template.wrongCommand, msg.message_id);
-    }
+          });
+        } else {
+          sendMessage(
+            this.bot,
+            chatId,
+            Template.packageNotFound(packageSlug),
+            msg.message_id,
+          );
+        }
+      });
+  }
+
+  private sanitizePackageSlug(
+    msgWithoutSpaces: string,
+    cameDirectlyFromAdd = true,
+  ) {
+    const packageSlug =
+      msgWithoutSpaces.trim().split(' ')[cameDirectlyFromAdd ? 1 : 0] || '';
+
+    return packageSlug;
   }
 }

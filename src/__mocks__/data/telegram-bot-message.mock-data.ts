@@ -10,8 +10,8 @@ export const predeterminedMessageId = 123123123;
 
 export const generateTelegramBotMessage = (
   text = 'some text',
-  chatId = predeterminedChatId,
   messageId = predeterminedMessageId,
+  chatId = predeterminedChatId,
 ): TelegramBot.Message =>
   ({
     chat: { id: chatId },
@@ -23,8 +23,8 @@ export const generateCallbackQueryMessage = (
   event: KeyBoardEventsKeys,
   metadata: any,
   text = 'some text',
-  chatId = predeterminedChatId,
   messageId = predeterminedMessageId,
+  chatId = predeterminedChatId,
 ): TelegramBot.CallbackQuery =>
   ({
     id: 'callbackQuery Id',
