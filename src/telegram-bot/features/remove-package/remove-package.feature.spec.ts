@@ -204,8 +204,6 @@ describe('Remove Package Feature', () => {
       });
 
       describe('User has NOT the package', () => {
-        let user: User;
-
         beforeEach(() => {
           user = generateUserWithEmptyPackages();
 

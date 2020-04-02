@@ -20,7 +20,10 @@ jest.mock('../base.command');
 import { sendMessage } from '../../common';
 jest.mock('../../common/utils/utils');
 import { Template } from './common';
-import { generateTelegramBotMessage } from '../../../__mocks__/data/telegram-bot-message.mock-data';
+import {
+  generateTelegramBotMessage,
+  generateUserWithNPackage,
+} from '../../../__mocks__/data';
 
 describe('AddFeature', () => {
   let feature: AddFeature;
@@ -59,80 +62,139 @@ describe('AddFeature', () => {
       );
     });
 
-    describe('PackageSlug Parameter', () => {
-      it('should validate the package slug', () => {
-        const slug = 'angular';
-        const msg = buildMessageReceived(`     ${slug}`);
-
-        ((feature as unknown) as BaseCommandMock).triggerCommand(msg);
-
-        expect(
-          ((npmStatsService as unknown) as NpmStatsServiceMock).slugToValidate,
-        ).toEqual([slug]);
-      });
-
-      it('should indicate that the command is malformed', () => {
-        const msg = buildMessageReceived('');
-
-        ((feature as unknown) as BaseCommandMock).triggerCommand(msg);
-
-        expect(sendMessage).toHaveBeenCalledWith(
-          bot,
-          msg.chat.id,
-          Template.wrongCommand,
-          msg.message_id,
-        );
-      });
-    });
-
-    describe('Check package', () => {
+    describe('Add indicating package', () => {
       let slug: string;
       let msg: TelegramBot.Message;
 
       beforeEach(() => {
-        slug = 'angular';
+        slug = '@angular/cli';
         msg = buildMessageReceived(slug);
 
         ((feature as unknown) as BaseCommandMock).triggerCommand(msg);
       });
 
-      describe('Valid Package', () => {
-        let spyAddPackageSpy: jasmine.Spy;
+      describe('Adding the Package', () => {
+        describe('Invalid Slug', () => {
+          it("should send that the package wrong, it wasn't found", () => {
+            ((npmStatsService as unknown) as NpmStatsServiceMock).validateSlugFalse();
 
-        beforeEach(() => {
-          spyAddPackageSpy = spyOn(usersService, 'addPackage').and.returnValue(
-            of({}),
-          );
+            expect(sendMessage).toHaveBeenCalledWith(
+              bot,
+              msg.chat.id,
+              Template.packageNotFound(slug),
+              msg.message_id,
+            );
+          });
         });
 
-        it('should store in the DB the package', () => {
-          ((npmStatsService as unknown) as NpmStatsServiceMock).validateSlugSuccess();
+        describe('Valid Slug', () => {
+          beforeEach(() => {
+            jest
+              .spyOn(usersService, 'addPackage')
+              .mockImplementation((chatId: number, packageSlug: string) => {
+                const randomUser = generateUserWithNPackage(4, chatId);
+                randomUser.addPackage({ npmSlug: packageSlug });
 
-          expect(spyAddPackageSpy).toHaveBeenCalledWith(msg.chat.id, slug);
-        });
+                return of(randomUser);
+              });
 
-        it('should send that the package is valid after write on DB', () => {
-          ((npmStatsService as unknown) as NpmStatsServiceMock).validateSlugSuccess();
+            ((npmStatsService as unknown) as NpmStatsServiceMock).validateSlugSuccess();
+          });
 
-          expect(sendMessage).toHaveBeenCalledWith(
-            bot,
-            msg.chat.id,
-            Template.success(slug),
-            msg.message_id,
-          );
+          it('should add the package', () => {
+            expect(usersService.addPackage).toHaveBeenCalledWith(
+              msg.chat.id,
+              slug,
+            );
+          });
+
+          it('should send the success message', () => {
+            expect(sendMessage).toHaveBeenCalledWith(
+              bot,
+              msg.chat.id,
+              Template.success(slug),
+              msg.message_id,
+            );
+          });
         });
       });
+    });
 
-      describe('Invalid Package', () => {
-        it('should send that the package wrong, was not found', () => {
-          ((npmStatsService as unknown) as NpmStatsServiceMock).validateSlugFalse();
+    describe('Add without indicating package', () => {
+      let slug: string;
+      let principalMsg: TelegramBot.Message;
+      let replyMsg: TelegramBot.Message;
 
-          expect(sendMessage).toHaveBeenCalledWith(
-            bot,
-            msg.chat.id,
-            Template.packageNotFound(slug),
-            msg.message_id,
-          );
+      beforeEach(() => {
+        slug = '@angular/cli';
+        principalMsg = buildMessageReceived('');
+        replyMsg = generateTelegramBotMessage(slug, 988766544312);
+
+        ((sendMessage as unknown) as jest.SpyInstance).mockImplementation(() =>
+          of(replyMsg),
+        );
+
+        ((feature as unknown) as BaseCommandMock).triggerCommand(principalMsg);
+      });
+
+      it('should ask for the package', () => {
+        expect(sendMessage).toHaveBeenCalledWith(
+          bot,
+          principalMsg.chat.id,
+          Template.tellMeThePackage,
+          principalMsg.message_id,
+          null,
+          true,
+        );
+      });
+
+      describe('Adding The package on Reply', () => {
+        beforeEach(() => {
+          bot.onReplyToMessageNotify(replyMsg);
+        });
+
+        describe('Invalid Slug', () => {
+          it("should send that the package wrong, it wasn't found", () => {
+            ((npmStatsService as unknown) as NpmStatsServiceMock).validateSlugFalse();
+
+            expect(sendMessage).toHaveBeenCalledWith(
+              bot,
+              replyMsg.chat.id,
+              Template.packageNotFound(slug),
+              replyMsg.message_id,
+            );
+          });
+        });
+
+        describe('Valid Slug', () => {
+          beforeEach(() => {
+            jest
+              .spyOn(usersService, 'addPackage')
+              .mockImplementation((chatId: number, packageSlug: string) => {
+                const randomUser = generateUserWithNPackage(4, chatId);
+                randomUser.addPackage({ npmSlug: packageSlug });
+
+                return of(randomUser);
+              });
+
+            ((npmStatsService as unknown) as NpmStatsServiceMock).validateSlugSuccess();
+          });
+
+          it('should add the package', () => {
+            expect(usersService.addPackage).toHaveBeenCalledWith(
+              replyMsg.chat.id,
+              slug,
+            );
+          });
+
+          it('should send the success message', () => {
+            expect(sendMessage).toHaveBeenCalledWith(
+              bot,
+              replyMsg.chat.id,
+              Template.success(slug),
+              replyMsg.message_id,
+            );
+          });
         });
       });
     });

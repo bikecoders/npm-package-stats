@@ -1,16 +1,7 @@
 import { Utils } from '../../../../common';
 
-export const wrongCommand = `I didn't understand 🤔
-You need to use the command <code>/add</code> in the following way:
-
-<code>add you_package_slug</code>
-
-You can find the slug on the URL's package on npm.
-For example for Angular, the npm URL is <code>${Utils.buildNPMLink(
-  'angular',
-)}</code> and the slug is <i>angular</i>
-
-Try again 😸`;
+export const tellMeThePackage =
+  'Tell me the <b>package slug</b> that you want to add 📦';
 
 export const success = (
   slug: string,

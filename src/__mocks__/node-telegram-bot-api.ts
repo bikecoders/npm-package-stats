@@ -99,6 +99,28 @@ class TelegramBot {
     .mockImplementation(() => Promise.resolve());
   editMessageText = jest.fn().mockImplementation(() => Promise.resolve());
 
+  onReplyToMessagePublisher = new Publisher();
+  onReplyToMessageNotify = (msg: TelegramBotReal.Message) => {
+    this.onReplyToMessagePublisher.notifySubscriber(
+      `${msg.chat.id}${msg.message_id}`,
+      msg,
+    );
+  };
+  onReplyToMessage = jest
+    .fn()
+    .mockImplementation(
+      (
+        chatId: number,
+        messageId: number,
+        callback: (msg: TelegramBotReal.Message) => void,
+      ) => {
+        this.onReplyToMessagePublisher.addSubscriber(
+          `${chatId}${messageId}`,
+          callback,
+        );
+      },
+    );
+
   private errorConstructor(errCode: number) {
     return {
       response: {

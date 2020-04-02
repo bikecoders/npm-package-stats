@@ -2,6 +2,27 @@ import * as TelegramBot from 'node-telegram-bot-api';
 
 import { Subject } from 'rxjs';
 
+function buildReplyMarkUp(
+  inlineKeyboard: TelegramBot.InlineKeyboardButton[][],
+  forceReply: boolean,
+): Pick<TelegramBot.SendBasicOptions, 'reply_markup'> {
+  if (inlineKeyboard) {
+    return {
+      reply_markup: {
+        inline_keyboard: inlineKeyboard,
+      },
+    };
+  } else if (forceReply) {
+    return {
+      reply_markup: {
+        force_reply: true,
+      },
+    };
+  } else {
+    return {};
+  }
+}
+
 /**
  * Send a message or a reply to a conversation
  *
@@ -18,16 +39,11 @@ export function sendMessage(
   message: string,
   replyToMessageId?: number,
   inlineKeyboard?: TelegramBot.InlineKeyboardButton[][],
+  forceReply = false,
 ) {
   const sub = new Subject<TelegramBot.Message>();
 
-  const inlineKeyboardOption: TelegramBot.SendBasicOptions = inlineKeyboard
-    ? {
-        reply_markup: {
-          inline_keyboard: inlineKeyboard,
-        },
-      }
-    : {};
+  const inlineKeyboardOption = buildReplyMarkUp(inlineKeyboard, forceReply);
 
   bot
     .sendMessage(chatId, message, {

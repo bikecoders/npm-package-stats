@@ -17,6 +17,10 @@ module.exports = {
     jest: true,
   },
   rules: {
+    'no-shadow': [
+      'error',
+      { builtinGlobals: false, hoist: 'functions', allow: [] },
+    ],
     '@typescript-eslint/interface-name-prefix': ['warn', 'always'],
     '@typescript-eslint/explicit-function-return-type': 'off',
     '@typescript-eslint/no-explicit-any': 'off',
