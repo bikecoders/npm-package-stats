@@ -1,6 +1,6 @@
 import * as TelegramBot from 'node-telegram-bot-api';
 
-import { Subject } from 'rxjs';
+import { Subject, Observable, from } from 'rxjs';
 
 function buildReplyMarkUp(
   inlineKeyboard: TelegramBot.InlineKeyboardButton[][],
@@ -64,4 +64,28 @@ export function sendMessage(
     });
 
   return sub.asObservable();
+}
+
+export function answerSingleArticleInlineQuery(
+  bot: TelegramBot,
+  query: TelegramBot.InlineQuery,
+  responseCacheId: string,
+  title: string,
+  description: string,
+  messageText: string,
+): Observable<boolean> {
+  return from(
+    bot.answerInlineQuery(query.id, [
+      {
+        id: responseCacheId,
+        type: 'article',
+        title,
+        description,
+        input_message_content: {
+          message_text: messageText,
+          parse_mode: 'HTML',
+        },
+      } as TelegramBot.InlineQueryResultArticle,
+    ]),
+  );
 }

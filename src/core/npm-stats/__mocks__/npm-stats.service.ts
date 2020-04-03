@@ -1,54 +1,37 @@
-import { Observable, Subject } from 'rxjs';
+import { Subject } from 'rxjs';
 
 import { INMPStats, INMPStatsError } from '../shared/api-npm.model';
+import { map } from 'rxjs/operators';
 
 export class NpmStatsService {
-  public requests: {
-    sub: Subject<any>;
-    slug: string;
-  }[] = [];
-
-  public slugToGetStats: string[] = [];
-
-  public infoSent: (INMPStats | INMPStatsError)[] = [];
-
   // ---------- getStatsForYesterday ----------------
-  getStatsForYesterday(slug: string): Observable<INMPStats | INMPStatsError> {
-    const sub = new Subject<any>();
+  private getStatsForYesterdayTrigger = new Subject<INMPStats>();
 
-    this.requests.push({ sub, slug });
-    this.slugToGetStats.push(slug);
+  public getStatsForYesterday = jest.fn().mockImplementation((slug: string) => {
+    return this.getStatsForYesterdayTrigger.asObservable().pipe(
+      map(() => {
+        const info = {
+          downloads: 1234,
+          start: '1991-08-08',
+          end: '1991-08-09',
+          package: slug,
+        } as INMPStats;
 
-    return sub.asObservable();
-  }
+        return info;
+      }),
+    );
+  });
 
   getStatsForYesterdaySuccess() {
-    this.requests.forEach(data => {
-      const info = {
-        downloads: 1234,
-        start: '1991-08-08',
-        end: '1991-08-09',
-        package: data.slug,
-      } as INMPStats;
-
-      this.infoSent.push(info);
-      data.sub.next(info);
-
-      data.sub.complete();
-    });
+    this.getStatsForYesterdayTrigger.next();
   }
 
   getStatsForYesterdayError() {
-    this.requests.forEach(data => {
-      const info = {
-        error: 'some random error',
-      } as INMPStatsError;
+    const info = {
+      error: 'some random error',
+    } as INMPStatsError;
 
-      this.infoSent.push(info);
-      data.sub.error(info);
-
-      data.sub.complete();
-    });
+    this.getStatsForYesterdayTrigger.error(info);
   }
   // ---------- getStatsForYesterday ----------------
 

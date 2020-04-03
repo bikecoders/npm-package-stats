@@ -119,4 +119,28 @@ describe('User Model', () => {
       expect(plainUser).toEqual(expectedUser);
     });
   });
+
+  describe('toClass', () => {
+    let rawUser: Partial<User>;
+
+    let expectedUser: User;
+
+    beforeEach(() => {
+      rawUser = {
+        chatId: predeterminedChatId,
+        packages: {
+          '@angular/cli': { npmSlug: '@angular/cli' },
+        },
+      };
+
+      expectedUser = new User(predeterminedChatId);
+      expectedUser.packages = rawUser.packages;
+    });
+
+    it('should instantiate the user correctly', () => {
+      const userInstantiated = User.toClass(rawUser);
+
+      expect(userInstantiated).toEqual(expectedUser);
+    });
+  });
 });

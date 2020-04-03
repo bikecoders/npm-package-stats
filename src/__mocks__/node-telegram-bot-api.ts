@@ -93,6 +93,7 @@ class TelegramBot {
     this.publisher.notifySubscriber(event, param);
   }
 
+  answerInlineQuery = jest.fn().mockImplementation(() => Promise.resolve());
   answerCallbackQuery = jest.fn().mockImplementation(() => Promise.resolve());
   editMessageReplyMarkup = jest
     .fn()

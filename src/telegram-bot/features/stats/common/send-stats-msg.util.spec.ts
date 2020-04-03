@@ -8,7 +8,6 @@ import { sendMessage } from '../../../common';
 jest.mock('../../../../telegram-bot/common');
 import { User } from '../../../../core/users/shared/models';
 
-import { INMPStats } from '../../../../core/npm-stats/shared/api-npm.model';
 import { NpmStatsService } from '../../../../core/npm-stats/npm-stats.service';
 jest.mock('../../../../core/npm-stats/npm-stats.service');
 import { NpmStatsService as NpmStatsServiceMock } from '../../../../core/npm-stats/__mocks__/npm-stats.service';
@@ -86,22 +85,6 @@ describe('Send Message', () => {
           user.chatId,
           jasmine.any(String),
         );
-      });
-
-      it('should send the right message', () => {
-        ((npmStatsService as unknown) as NpmStatsServiceMock).getStatsForYesterdaySuccess();
-
-        const infoSent = ((npmStatsService as unknown) as NpmStatsServiceMock)
-          .infoSent;
-
-        infoSent.forEach(({ downloads, end, start }: INMPStats) => {
-          expect(Template.stat).toHaveBeenLastCalledWith({
-            downloads,
-            end,
-            package: jasmine.any(String),
-            start,
-          });
-        });
       });
     });
   });
