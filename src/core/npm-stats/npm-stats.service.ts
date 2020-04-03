@@ -1,10 +1,15 @@
 import { Injectable } from '@nestjs/common';
 
-import { Observable, Subject, of } from 'rxjs';
-import { map, catchError } from 'rxjs/operators';
+import { Observable, of, bindCallback, throwError } from 'rxjs';
+import { map, catchError, mergeMap } from 'rxjs/operators';
 
 import npmAPI = require('api-npm');
-import { INMPStats, INMPStatsError } from './shared/api-npm.model';
+import {
+  INMPStats,
+  INMPStatsError,
+  instanceOfNMPStats,
+} from './shared/api-npm.model';
+import { bindCallback3A1R } from 'src/common/utils';
 
 @Injectable()
 export class NpmStatsService {
@@ -16,27 +21,31 @@ export class NpmStatsService {
   }
 
   getStatsForYesterday(slug: string): Observable<INMPStats> {
-    const subject = new Subject<INMPStats>();
+    const getStats = (bindCallback<
+      string,
+      string,
+      string,
+      INMPStats | INMPStatsError
+    >(npmAPI.getstat.bind(npmAPI)) as unknown) as bindCallback3A1R<
+      string,
+      string,
+      string,
+      INMPStats | INMPStatsError
+    >;
 
-    const callback = (data: INMPStats | INMPStatsError) => {
-      // If there is an error
-      if (!!(data as INMPStatsError).error) {
-        subject.error(data);
-      } else {
-        subject.next(data as INMPStats);
-      }
-
-      subject.complete();
-    };
-
-    npmAPI.getstat(
+    return getStats(
       slug,
       this.getDateOfXPassedDays(1),
       this.getDateOfXPassedDays(0),
-      callback,
+    ).pipe(
+      mergeMap(resp => {
+        if (instanceOfNMPStats(resp)) {
+          return of(resp);
+        } else {
+          return throwError(resp.error);
+        }
+      }),
     );
-
-    return subject.asObservable();
   }
 
   /**

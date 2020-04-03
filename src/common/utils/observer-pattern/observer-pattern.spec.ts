@@ -30,7 +30,8 @@ describe('ObserverPattern', () => {
       const newSubs = jest.fn();
       const newSubs2 = jest.fn();
 
-      publisher.addSubscriber(event, newSubs, newSubs2);
+      publisher.addSubscriber(event, newSubs);
+      publisher.addSubscriber(event, newSubs2);
 
       expect(publisher.getSubscribers(event)).toEqual([newSubs, newSubs2]);
     });

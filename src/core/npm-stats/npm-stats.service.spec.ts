@@ -1,7 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import npmAPI = require('api-npm');
+import { advanceTo } from 'jest-date-mock';
+
 import { NpmStatsService } from './npm-stats.service';
 
-import npmAPI = require('api-npm');
 import { INMPStats, INMPStatsError } from './shared/api-npm.model';
 
 describe('NpmStatsService', () => {
@@ -11,6 +13,8 @@ describe('NpmStatsService', () => {
 
   beforeEach(() => {
     randomSlug = 'ngx-sticky-directive';
+
+    advanceTo(new Date(2020, 0, 25));
   });
 
   beforeEach(async () => {
@@ -27,23 +31,27 @@ describe('NpmStatsService', () => {
 
   describe('Stats for yesterday', () => {
     describe("'getstats' parameters", () => {
-      const getDateOfXPassedDays = (days: number): string => {
-        const date = new Date();
-        date.setDate(date.getDate() - days);
-        return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
-      };
-
       beforeEach(() => {
-        service.validateSlug(randomSlug);
+        service.getStatsForYesterday(randomSlug).subscribe();
+        npmAPI.executeSuccessCallback();
       });
 
       it("should call 'getstats' with the right slug", () => {
-        expect(npmAPI.slug).toEqual(randomSlug);
+        expect(npmAPI.getstat).toHaveBeenCalledWith(
+          randomSlug,
+          jasmine.any(String),
+          jasmine.any(String),
+          jasmine.any(Function),
+        );
       });
 
       it("should call 'getstats' with the right start and end date", () => {
-        expect(npmAPI.from).toEqual(getDateOfXPassedDays(1));
-        expect(npmAPI.to).toEqual(getDateOfXPassedDays(0));
+        expect(npmAPI.getstat).toHaveBeenCalledWith(
+          jasmine.any(String),
+          '2020-1-24',
+          '2020-1-25',
+          jasmine.any(Function),
+        );
       });
     });
 
@@ -69,7 +77,7 @@ describe('NpmStatsService', () => {
 
         npmAPI.executeErrorCallback();
 
-        expect(npmAPI.errorData).toEqual(errorThrown);
+        expect(npmAPI.errorData.error).toEqual(errorThrown);
       });
     });
   });

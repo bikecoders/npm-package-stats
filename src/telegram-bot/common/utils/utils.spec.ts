@@ -3,19 +3,23 @@ import * as TelegramBot from 'node-telegram-bot-api';
 import { Observable, NEVER, Subscription } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
-import { sendMessage } from './utils';
+import { sendMessage, answerSingleArticleInlineQuery } from './utils';
+import { generateInlineQueryMessage } from '../../../__mocks__/data';
 
 describe('Utils', () => {
+  let bot;
+
+  beforeEach(() => {
+    bot = new TelegramBot('randomToken');
+  });
+
   describe('sendMessage', () => {
-    let bot;
     let chatID: number;
     let message: string;
     let replyToMessageId: number;
     let botSendMessageSpy: jasmine.Spy;
 
     beforeEach(() => {
-      bot = new TelegramBot('randomToken');
-
       chatID = 123;
       message = '<code>Hello World</code>';
       replyToMessageId = 321;
@@ -87,6 +91,26 @@ describe('Utils', () => {
         };
 
         sendMessage(bot, chatID, message, null, keyboard);
+
+        expect(botSendMessageSpy).toHaveBeenCalledWith(
+          jasmine.any(Number),
+          jasmine.any(String),
+          optionsUsed,
+        );
+      });
+    });
+
+    describe('Force Reply', () => {
+      it('should force reply the message', () => {
+        const optionsUsed: TelegramBot.SendMessageOptions = {
+          parse_mode: 'HTML',
+          reply_to_message_id: null,
+          reply_markup: {
+            force_reply: true,
+          },
+        };
+
+        sendMessage(bot, chatID, message, null, null, true);
 
         expect(botSendMessageSpy).toHaveBeenCalledWith(
           jasmine.any(Number),
@@ -182,6 +206,57 @@ describe('Utils', () => {
           expect(errorTriggered).toBeTruthy();
         });
       });
+    });
+  });
+
+  describe('Answer Single Article Inline Query', () => {
+    let query: TelegramBot.InlineQuery;
+    let responseCacheId: string;
+    let title: string;
+    let description: string;
+    let messageText: string;
+
+    let optionsUsed: TelegramBot.InlineQueryResult[];
+
+    it('should send the right parameters', () => {
+      query = generateInlineQueryMessage();
+      responseCacheId = 'super cache';
+      title = 'super title';
+      description = 'super description';
+      messageText = 'super message text';
+
+      optionsUsed = [
+        {
+          id: responseCacheId,
+          type: 'article',
+          title,
+          description,
+          input_message_content: {
+            message_text: messageText,
+            parse_mode: 'HTML',
+          },
+        },
+      ];
+
+      answerSingleArticleInlineQuery(
+        bot,
+        query,
+        responseCacheId,
+        title,
+        description,
+        messageText,
+      );
+
+      answerSingleArticleInlineQuery(
+        bot,
+        query,
+        responseCacheId,
+        title,
+        description,
+        messageText,
+      );
+
+      expect(bot.answerInlineQuery).toHaveBeenCalledWith(query.id, optionsUsed);
     });
   });
 });

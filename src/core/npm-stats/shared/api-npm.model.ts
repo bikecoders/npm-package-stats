@@ -5,6 +5,10 @@ export interface INMPStats {
   package: string;
 }
 
+export function instanceOfNMPStats(object: any): object is INMPStats {
+  return typeof object.package === 'string';
+}
+
 export interface INMPStatsError {
   error: string;
 }

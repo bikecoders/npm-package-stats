@@ -6,9 +6,6 @@ import {
 type getStatCallback = (data: INMPStats | INMPStatsError) => void;
 
 class APINode {
-  slug: string;
-  from: string;
-  to: string;
   callback: getStatCallback;
 
   successData: INMPStats;
@@ -17,19 +14,20 @@ class APINode {
     error: 'a wild error appear',
   };
 
-  getstat(slug: string, from: string, to: string, callback: getStatCallback) {
-    this.slug = slug;
-    this.from = from;
-    this.to = to;
-    this.callback = callback;
+  getstat = jest
+    .fn()
+    .mockImplementation(
+      (slug: string, from: string, to: string, callback: getStatCallback) => {
+        this.successData = {
+          downloads: 1234,
+          start: from,
+          end: to,
+          package: slug,
+        };
 
-    this.successData = {
-      downloads: 1234,
-      start: this.from,
-      end: this.to,
-      package: this.slug,
-    };
-  }
+        this.callback = callback;
+      },
+    );
 
   executeSuccessCallback() {
     this.callback(this.successData);

@@ -31,3 +31,10 @@ export const generateCallbackQueryMessage = (
     message: generateTelegramBotMessage(text, chatId, messageId),
     data: InlineQueryMetadataGenerator(event, metadata),
   } as TelegramBot.CallbackQuery);
+
+export const predeterminedQuery = 'random query';
+export const generateInlineQueryMessage = (query = predeterminedQuery) =>
+  ({
+    id: 'random query id',
+    query,
+  } as TelegramBot.InlineQuery);
