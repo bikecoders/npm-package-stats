@@ -2,7 +2,7 @@
 #
 # Check https://circleci.com/docs/2.0/language-javascript/ for more details
 #
-var_1: &default_docker_image circleci/node:10.15
+var_1: &default_docker_image circleci/node:lts
 
 var_2: &cache_key v1-dependencies-{{ checksum "yarn.lock" }}
 
