@@ -3,7 +3,7 @@ version: "3"
 
 services:
   server:
-    image: circleci/node:10.22
+    image: circleci/node:10.24
     ports:
       - 3000:3000
       - 9229:9229
