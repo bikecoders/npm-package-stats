@@ -64,7 +64,7 @@
     "jest": "25.5.4",
     "jest-date-mock": "1.0.8",
     "jest-sonar-reporter": "2.0.0",
-    "nodemon": "2.0.4",
+    "nodemon": "2.0.22",
     "prettier": "1.19.1",
     "sonar-scanner": "3.1.0",
     "supertest": "4.0.2",
