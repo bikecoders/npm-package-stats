@@ -37,7 +37,7 @@
     "class-transformer": "0.3.1",
     "nedb": "1.8.0",
     "node-cron": "2.0.3",
-    "node-telegram-bot-api": "0.50.0",
+    "node-telegram-bot-api": "0.61.0",
     "reflect-metadata": "0.1.13",
     "rimraf": "3.0.2",
     "rxjs": "6.6.0"
@@ -52,7 +52,7 @@
     "@types/nedb": "1.8.11",
     "@types/node": "12.12.48",
     "@types/node-cron": "2.0.3",
-    "@types/node-telegram-bot-api": "0.40.3",
+    "@types/node-telegram-bot-api": "0.61.7",
     "@types/supertest": "2.0.8",
     "@typescript-eslint/eslint-plugin": "2.25.0",
     "@typescript-eslint/parser": "2.25.0",
